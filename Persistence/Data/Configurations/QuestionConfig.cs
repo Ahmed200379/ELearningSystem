@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.Configurations
+namespace Persistence.Data.Configurations
 {
     public class QuestionConfig : IEntityTypeConfiguration<Question>
     {

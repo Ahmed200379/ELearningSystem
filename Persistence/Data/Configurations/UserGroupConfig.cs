@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.Configurations
+namespace Persistence.Data.Configurations
 {
     public class UserGroupConfig : IEntityTypeConfiguration<UserGroup>
     {

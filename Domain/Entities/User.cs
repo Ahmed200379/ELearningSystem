@@ -10,11 +10,8 @@ namespace Domain.Entities
 {
    public class User :IdentityUser
     {
-        public string FirstName { get; set; }=string.Empty;
-        public string LastName { get; set; }= string.Empty;
         public string? photoUrl { get; set; }
         public string ParentNumber { get; set; } = string.Empty;
-        public Role Role { get; set; }
         public virtual ICollection<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
         public virtual ICollection<UserQuiz> UserQuizzes { get; set; } = new List<UserQuiz>();
         public virtual ICollection<Material> Materials { get; set; } = new List<Material>();

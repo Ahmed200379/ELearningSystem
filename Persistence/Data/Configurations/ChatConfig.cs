@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.Configurations
+namespace Persistence.Data.Configurations
 {
-    public class AnswerConfig : IEntityTypeConfiguration<Answer>
+    public class ChatConfig : IEntityTypeConfiguration<Chat>
     {
-        public void Configure(EntityTypeBuilder<Answer> builder)
+        public void Configure(EntityTypeBuilder<Chat> builder)
         {
-            builder.HasKey(a => a.Id);
+           builder.HasKey(c => c.Id);
         }
     }
 }

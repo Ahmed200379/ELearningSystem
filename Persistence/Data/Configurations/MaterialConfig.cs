@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.Configurations
+namespace Persistence.Data.Configurations
 {
-   public class PaymentConfig : IEntityTypeConfiguration<Payment>
+    public class MaterialConfig : IEntityTypeConfiguration<Material>
     {
-        public void Configure(EntityTypeBuilder<Payment> builder)
+        public void Configure(EntityTypeBuilder<Material> builder)
         {
-            builder.HasKey(p => p.Id);
+            builder.HasKey(m=>m.Id);
         }
     }
 }

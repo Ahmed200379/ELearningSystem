@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.Configurations
+namespace Persistence.Data.Configurations
 {
     public class GroupConfig : IEntityTypeConfiguration<Group>
     {
@@ -15,7 +15,7 @@ namespace Persistence.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.HasMany(b=>b.Materials).WithMany(m=>m.Groups).UsingEntity(j=>j.ToTable("MaterialGroup"));
-            builder.HasMany(builder => builder.Chats).WithOne(c => c.Group).HasForeignKey(c => c.GroupId);
+            builder.HasMany(g => g.Chats).WithOne(c => c.Group).HasForeignKey(c => c.GroupId);
             builder.HasMany(g => g.UserGroups).WithOne(ug => ug.Group).HasForeignKey(ug => ug.GroupId);
         }
     }

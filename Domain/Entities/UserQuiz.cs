@@ -10,9 +10,9 @@ namespace Domain.Entities
     {
         public double Grade { get; set; } = 0.0;
         public string UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public string QuizId { get; set; }
-        public Quiz Quiz { get; set; }
+        public virtual Quiz Quiz { get; set; }
 
     }
 }
