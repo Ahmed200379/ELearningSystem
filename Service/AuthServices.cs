@@ -34,9 +34,26 @@ namespace Services
             _jwtRepo = jwtRepo;
         }
 
-        public Task<GeneralResponseDto> ForgetPassword(string Email)
+        public async Task<GeneralResponseDto> ForgetPassword(string Email)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByEmailAsync(Email);
+            if (user == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "User not found with this email. "
+                };
+            }
+            var otp = Random.Shared.Next(100000, 999999).ToString();
+            _memoryCache.Set(Email, otp, TimeSpan.FromMinutes(15));
+            var emailBody = $"Your OTP code is:\n\t{otp}\n. It is valid for 15 minutes.\n do'nt share this code with anybody";
+            await _emailService.SendAsync(Email, "Password Reset OTP", emailBody, true);
+            return new GeneralResponseDto
+            {
+                IsSuccess = false,
+                message = "OTP has been sent to your email address."
+            };
         }
 
         public async Task<GeneralResponseDto> Login(LoginDto loginDto )
@@ -101,14 +118,69 @@ namespace Services
             };
         }
 
-        public Task<GeneralResponseDto> ResetPassword(ResetPasswordDto resetPasswordDto)
+        public async Task<GeneralResponseDto> ResetPassword(ResetPasswordDto resetPasswordDto)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            if (user == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "User not found with this email."
+                };
+            }
+            var validationPassword = await _passwordValidator.ValidateAsync(_userManager, user, resetPasswordDto.Password);
+            if (!validationPassword.Succeeded)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Password is not valid",
+                    errors = validationPassword.Errors.Select(e => e.Description).ToList()
+                };
+            }
+            user.PasswordHash = _passwordHasher.HashPassword(user, resetPasswordDto.Password);
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Password reset failed.",
+                    errors = result.Errors.Select(e => e.Description).ToList()
+                };
+            }
+            return new GeneralResponseDto
+            {
+                IsSuccess = true,
+                message = "Password has been reset successfully. "
+            };
+
         }
 
-        public Task<GeneralResponseDto> VarifyOtpForPassword(VerifyOtpDto verifyOtpDto)
+        public async Task<GeneralResponseDto> VarifyOtpForPassword(VerifyOtpDto verifyOtpDto)
         {
-            throw new NotImplementedException();
+            if (!_memoryCache.TryGetValue(verifyOtpDto.Email, out string? otp))
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "OTP has expired or is invalid."
+                };
+            }
+            if (otp != verifyOtpDto.Otp)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Invalid OTP."
+                };
+            }
+            return new GeneralResponseDto
+            {
+                IsSuccess = true,
+                message = "OTP verified successfully."
+            };
         }
 
         public async Task<GeneralResponseDto> VerifyOtp(VerifyOtpDto verifyOtpDto)
