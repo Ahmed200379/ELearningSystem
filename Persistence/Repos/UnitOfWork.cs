@@ -23,7 +23,7 @@ namespace Persistence.Repos
             return await _context.SaveChangesAsync();
         }
 
-        public IGeneticRepo<T> GetRepository<T>() where T : Base
+        public IGeneticRepo<T> GetRepository<T>() where T : class
         {
             var type = typeof(T).Name;
             if (!_repositories.ContainsKey(type))
