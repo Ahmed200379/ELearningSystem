@@ -42,7 +42,7 @@ namespace Services
                 return new GeneralResponseDto
                 {
                     IsSuccess = false,
-                    message = "User not found with this email. "
+                    message = "User not found with this email."
                 };
             }
             var otp = Random.Shared.Next(100000, 999999).ToString();

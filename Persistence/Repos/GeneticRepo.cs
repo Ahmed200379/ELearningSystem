@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repos
 {
-    public class GeneticRepo<T> : IGeneticRepo<T> where T : Base
+    public class GeneticRepo<T> : IGeneticRepo<T> where T : class
     {
         private readonly AppDbContext _context;
         private readonly DbSet<T> _dbSet;

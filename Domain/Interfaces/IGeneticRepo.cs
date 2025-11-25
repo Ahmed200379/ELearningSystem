@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-   public interface IGeneticRepo<T> where T : Base
+   public interface IGeneticRepo<T> where T : class
     {
         Task<IEnumerable<T>> GetAllAsync();
         Task AddAsync(T item);

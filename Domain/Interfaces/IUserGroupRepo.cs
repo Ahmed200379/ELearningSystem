@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-   public interface IUnitOfWork
+    public interface IUserGroupRepo
     {
-       Task<int> SaveChanges();
-       IGeneticRepo<T> GetRepository<T>() where T : class;
+        Task<bool> IsUserInGroup(string userId, string groupId);
+        Task AddUserGroup(UserGroup userGroup);
     }
 }
