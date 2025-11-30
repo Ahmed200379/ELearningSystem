@@ -23,7 +23,7 @@ namespace ELearningSystem.Controllers
             }
             return Ok(result);
         }
-        [HttpPost("verify otp")]
+        [HttpPost("verifyotp")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpDto verifyOtpDto)
         {
             var result = await _authService.VerifyOtp(verifyOtpDto);
@@ -43,7 +43,7 @@ namespace ELearningSystem.Controllers
             }
             return Ok(result);
         }
-        [HttpPost("forget password")]
+        [HttpPost("forgetpassword")]
         public async Task<IActionResult> ForgetPassword([FromBody] string email)
         {
             var result = await _authService.ForgetPassword(email);
@@ -53,7 +53,7 @@ namespace ELearningSystem.Controllers
             }
             return Ok(result);
         }
-        [HttpPost("verify otp for password")]
+        [HttpPost("verifyotpforpassword")]
         public async Task<IActionResult> VerifyCode([FromBody] VerifyOtpDto verifyOtpDto)
         {
             var result = await _authService.VarifyOtpForPassword(verifyOtpDto);
@@ -63,7 +63,7 @@ namespace ELearningSystem.Controllers
             }
             return Ok(result);
         }
-
+        [HttpPost("resetpassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {
             var result = await _authService.ResetPassword(resetPasswordDto);
