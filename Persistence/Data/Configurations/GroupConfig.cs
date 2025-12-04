@@ -14,7 +14,7 @@ namespace Persistence.Data.Configurations
         public void Configure(EntityTypeBuilder<Group> builder)
         {
             builder.HasKey(x => x.Id);
-            builder.HasMany(b=>b.Materials).WithMany(m=>m.Groups).UsingEntity(j=>j.ToTable("MaterialGroup"));
+            builder.HasMany(b=>b.Materials).WithOne(m=>m.Group).HasForeignKey(m=>m.GroupId);
             builder.HasMany(g => g.Chats).WithOne(c => c.Group).HasForeignKey(c => c.GroupId);
             builder.HasMany(g => g.UserGroups).WithOne(ug => ug.Group).HasForeignKey(ug => ug.GroupId);
         }

@@ -12,8 +12,10 @@ namespace Domain.Entities
         public string Title { get; set; }=string.Empty;
         public string Description { get; set; } = string.Empty;
         public string File {  get; set; } = string.Empty;
+        public DateTime AdditionDate { get; set; } = DateTime.Now;
         public TypeOfMaterial Type { get; set; } = TypeOfMaterial.Book;
         public virtual ICollection<User> Users { get; set; } = new List<User>();
-        public virtual ICollection<Group> Groups { get; set; } = new List<Group>();
+        public virtual Group Group { get; set; }
+        public string GroupId { get; set; }
     }
 }
