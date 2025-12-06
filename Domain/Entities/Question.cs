@@ -10,7 +10,7 @@ namespace Domain.Entities
    public class Question:Base
     {
         public string Title { get; set; } = string.Empty;
-        public string Image { get; set; } = string.Empty;
+        public string? Image { get; set; } = string.Empty;
         public QuestionType Type { get; set; }=QuestionType.Choose;
         public int TimeLimit { get; set; } = 0;
         public string QuizId { get; set; }

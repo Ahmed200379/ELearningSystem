@@ -12,6 +12,7 @@ namespace Domain.Entities
         public string Description { get; set; }=string.Empty;
         public DateTime CreationDate { get; set; } = DateTime.Now;
         public double Points { get; set; } = 0.0;
+        public string Image { get; set; } = string.Empty;
         public virtual ICollection<UserQuiz> UserQuizzes { get; set; } = new List<UserQuiz>();
         public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
     }

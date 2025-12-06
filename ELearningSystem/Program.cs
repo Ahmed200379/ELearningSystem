@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
+using Services;
 using Shared.Helpers;
 using System.Text;
 
@@ -44,6 +45,9 @@ namespace ELearningSystem
                 });
 
             builder.Services.AddAuthorization();
+            builder.Services.AddApplicationServices(builder.Configuration);
+            builder.Services.AddPersistenceInfrastructionServices(builder.Configuration);
+
 
             var app = builder.Build();
 
@@ -59,6 +63,7 @@ namespace ELearningSystem
             // Authentication + Authorization
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseStaticFiles();
             app.MapControllers();
 
             app.Run();
