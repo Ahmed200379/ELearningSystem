@@ -18,9 +18,6 @@ namespace ELearningSystem
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Persistence
-            builder.Services.AddPersistenceInfrastructionServices(builder.Configuration);
-
             // Jwt Config
             var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
 
@@ -45,8 +42,6 @@ namespace ELearningSystem
                 });
 
             builder.Services.AddAuthorization();
-            builder.Services.AddApplicationServices(builder.Configuration);
-            builder.Services.AddPersistenceInfrastructionServices(builder.Configuration);
 
 
             var app = builder.Build();
