@@ -2,12 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Services
 {
     public static class ApplicationServicesRegistration
@@ -19,6 +13,7 @@ namespace Services
             services.AddScoped<IAuthService, AuthServices>();
             services.AddScoped<IGroupServices, GroupServices>();
             services.AddScoped<IMaterialService, MaterialService>();
+           // services.AddScoped<IImageStorage, ImageStorage>();
 
             return services;
         }

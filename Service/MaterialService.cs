@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Services.Abstractions;
 using Shared.Dtos;
 using Shared.Dtos.Material;
@@ -14,17 +15,37 @@ namespace Services
     public class MaterialService : IMaterialService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public MaterialService(IUnitOfWork unitOfWork)
+        private readonly IImageStorage _imageStorage;
+        public MaterialService(IUnitOfWork unitOfWork, IImageStorage imageStorage)
         {
             _unitOfWork = unitOfWork;
+            _imageStorage = imageStorage;
         }
-        public async Task<GeneralResponseDto> AddMaterial(AddMaterialDto addMaterialDto)
+        public async Task<GeneralResponseDto> AddMaterial(AddMaterialDto addMaterialDto,IFormFile file)
         {
+            if (file == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "file is required"
+                };
+            }
+            var pathFolder = $"UploadedFiles/Materials/{addMaterialDto.GroupId}";
+            var filePath = await _imageStorage.SaveFile(file, pathFolder);
+            if (filePath == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Failed to add material.",
+                };
+            }
             var newMaterial = new Material
             { 
                 Title = addMaterialDto.Title,
                 Description = addMaterialDto.Description,
-                File = addMaterialDto.File,
+                File = filePath,
                 Type = addMaterialDto.Type,
                 GroupId = addMaterialDto.GroupId,
             };
@@ -32,6 +53,15 @@ namespace Services
             var result = await _unitOfWork.SaveChanges();
             if (result == 0)
             {
+               var isDeleted= _imageStorage.DeleteFile(filePath);
+                if (!isDeleted )
+                {
+                   return new GeneralResponseDto
+                    {
+                        IsSuccess = false,
+                        message = "Failed to add material with error in delete saved file.",
+                    };
+                }
                return new GeneralResponseDto
                 {
                     IsSuccess = false,
@@ -67,11 +97,23 @@ namespace Services
                     message = "Failed to delete material.",
                 };
             }
-            return new GeneralResponseDto
+            else
             {
-                IsSuccess = true,
-                message = "Material deleted successfully.",
-            };
+                var isDeleted = _imageStorage.DeleteFile(material.File);
+                if (!isDeleted)
+                {
+                    return new GeneralResponseDto
+                    {
+                        IsSuccess = false,
+                        message = "Failed to delete material.",
+                    };
+                }
+            }
+                return new GeneralResponseDto
+                {
+                    IsSuccess = true,
+                    message = "Material deleted successfully.",
+                };
 
         }
     }
