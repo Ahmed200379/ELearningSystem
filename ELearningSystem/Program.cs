@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Persistence;
 using Persistence.Data;
-using Services;
 using Shared.Helpers;
 using System.Text;
 
@@ -65,7 +63,7 @@ namespace ELearningSystem
             app.UseAuthorization();
             app.UseStaticFiles();
             app.MapControllers();
-
+            app.MapHub<ChatHub>("/chatHub");
             app.Run();
         }
     }

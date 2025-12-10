@@ -12,7 +12,7 @@ namespace Services.Abstractions
     {
          Task<GeneralResponseDto> SendMessage(SendMessageDto sendMessageDto);
          Task<GeneralResponseDto> GetMessages(string groupId);
-         Task<GeneralResponseDto> DeleteMessage(EditMessageDto editMessageDto);
+         Task<GeneralResponseDto> DeleteMessage(DeleteMessageDto deleteMessageDto);
          Task<GeneralResponseDto> EditMessage(EditMessageDto editMessageDto);
     }
 }
