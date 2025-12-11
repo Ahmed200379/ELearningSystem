@@ -1,10 +1,8 @@
-﻿
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces;
 using Services.Abstractions;
 using Shared.Dtos.Answer;
 using Shared.Helpers;
-
 namespace Services
 {
     public class AnswerService : IAnswerService

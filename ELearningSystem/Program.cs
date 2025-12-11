@@ -40,7 +40,6 @@ namespace ELearningSystem
                             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
                     };
                 });
-            // إضافة DbContext مع سلسلة الاتصال
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
