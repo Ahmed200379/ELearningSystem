@@ -51,13 +51,7 @@ namespace ELearningSystem
                     }
                 };
 
-                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                { securityScheme, new string[] {} }
-                });
-            });
-                // Jwt Config
+            // Jwt Config
             var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
