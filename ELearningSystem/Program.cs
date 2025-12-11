@@ -57,7 +57,7 @@ namespace ELearningSystem
                 { securityScheme, new string[] {} }
                 });
             });
-            // Jwt Config
+                // Jwt Config
             var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
