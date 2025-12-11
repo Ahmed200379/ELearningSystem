@@ -116,5 +116,33 @@ namespace Services
                 };
 
         }
+        public async Task<GeneralResponseDto> GetAllMaterial(string groupId)
+        {
+            var materials = await _unitOfWork.GetRepository<Material>().GetAllAsyncs(m => m.GroupId == groupId);
+            if (materials == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "No materials found for the specified group.",
+                };
+            }
+            var materialDtos = materials.Select(m => new ReadMaterialDto
+            {
+                Id = m.Id,
+                Title = m.Title,
+                Description = m.Description,
+                File = m.File,
+                Type = m.Type,
+                GroupId = m.GroupId,
+                AdditionDate = m.AdditionDate 
+            }).ToList();
+            return new GeneralResponseDto
+            {
+                IsSuccess = true,
+                message = "Materials retrieved successfully.",
+                data = materialDtos
+            };
+        }
     }
 }
