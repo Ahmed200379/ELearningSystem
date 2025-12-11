@@ -8,7 +8,7 @@ namespace Services.Abstractions
     {
         Task<Answer> CreateAnswer(RequestAnswerDto answerDto);
         Task<Answer> UpdateAnswer(string id, RequestAnswerDto answerDto);
-        Task<bool> DeleteAnswer(string id);
+        Task<string> DeleteAnswer(string id);
         Task<ResponseAnswerDto> GetAnswerById(string id);
         Task<IEnumerable<ResponseAnswerDto>> GetAllAnswers();
     }

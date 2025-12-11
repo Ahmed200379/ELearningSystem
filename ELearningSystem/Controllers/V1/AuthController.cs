@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Shared.Dtos.Auth;
 
-namespace ELearningSystem.Controllers
+namespace ELearningSystem.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -3,11 +3,6 @@ using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Shared.Dtos;
 using Shared.Dtos.Group;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services
 {
