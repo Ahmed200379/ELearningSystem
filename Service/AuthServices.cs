@@ -12,23 +12,17 @@ namespace Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
-        private readonly PasswordValidator<User> _passwordValidator;
-        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IMemoryCache _memoryCache;
         private readonly IEmailService _emailService;
         private readonly IJwtRepo _jwtRepo;
         public AuthServices(IUnitOfWork unitOfWork,
             UserManager<User> userManager,
-            PasswordValidator<User> passwordValidator,
-            IPasswordHasher<User> passwordHasher,
             IMemoryCache memoryCache,
             IEmailService emailService,
             IJwtRepo jwtRepo)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
-            _passwordValidator = passwordValidator;
-            _passwordHasher = passwordHasher;
             _memoryCache = memoryCache;
             _emailService = emailService;
             _jwtRepo = jwtRepo;
@@ -51,7 +45,7 @@ namespace Services
             await _emailService.SendAsync(Email, "Password Reset OTP", emailBody, true);
             return new GeneralResponseDto
             {
-                IsSuccess = false,
+                IsSuccess = true,
                 message = "OTP has been sent to your email address."
             };
         }
@@ -86,19 +80,7 @@ namespace Services
                     IsSuccess = false,
                     message = "User already exists"
                 };
-            }
-            var validationPassword = await _passwordValidator.ValidateAsync(_userManager, null, registerDto.Password);
-            if (!validationPassword.Succeeded)
-            {
-                return new GeneralResponseDto
-                {
-                    IsSuccess = false,
-                    message = "Password is not valid",
-                    errors = validationPassword.Errors.Select(e => e.Description).ToList()
-                };
-            }
-           
-          //  _memoryCache.Set($"Register_{newUser.Email}", newUser, TimeSpan.FromMinutes(15));
+            }        
             var otp= Random.Shared.Next(100000, 999999).ToString();
             var cashedUser = new CashedUser
             {
@@ -113,7 +95,7 @@ namespace Services
 
             return new GeneralResponseDto
             {
-                IsSuccess = false,
+                IsSuccess = true,
                 message = " Please verify your email using the OTP sent to your email address."
             };
         }
@@ -129,18 +111,13 @@ namespace Services
                     message = "User not found with this email."
                 };
             }
-            var validationPassword = await _passwordValidator.ValidateAsync(_userManager, user, resetPasswordDto.Password);
-            if (!validationPassword.Succeeded)
-            {
-                return new GeneralResponseDto
-                {
-                    IsSuccess = false,
-                    message = "Password is not valid",
-                    errors = validationPassword.Errors.Select(e => e.Description).ToList()
-                };
-            }
-            user.PasswordHash = _passwordHasher.HashPassword(user, resetPasswordDto.Password);
-            var result = await _userManager.UpdateAsync(user);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                token,
+                resetPasswordDto.Password
+            );
             if (!result.Succeeded)
             {
                 return new GeneralResponseDto
@@ -176,6 +153,7 @@ namespace Services
                     message = "Invalid OTP."
                 };
             }
+            _memoryCache.Remove(verifyOtpDto.Email);
             return new GeneralResponseDto
             {
                 IsSuccess = true,
@@ -207,7 +185,6 @@ namespace Services
                 Email = cashedUser.registerDto.Email,
                 PhoneNumber = cashedUser.registerDto.PhoneNumber,
                 Id = Guid.NewGuid().ToString(),
-                PasswordHash = cashedUser.registerDto.Password,
                 ParentNumber = cashedUser.registerDto.FatherNumber,
                 photoUrl = cashedUser.registerDto.PersonalPhoto
             };
