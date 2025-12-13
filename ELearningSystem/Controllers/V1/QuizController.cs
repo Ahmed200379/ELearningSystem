@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
+using Shared.Dtos;
 using Shared.Dtos.Quiz;
 
 namespace ELearningSystem.Controllers.V1
@@ -19,13 +20,23 @@ namespace ELearningSystem.Controllers.V1
         public async Task<IActionResult> GetAllQuizzes()
         {
             var quizzes = await _quizService.GetAll();
-            return Ok(quizzes);
+            return Ok(new GeneralResponseDto
+            {
+                statusCode = StatusCodes.Status200OK,
+                message = "Quizzes retrieved successfully",
+                data = quizzes
+            });
         }
         [HttpPost]
         public async Task<IActionResult> AddQuiz([FromBody] RequestQuizDto quiz)
         {
             var addedQuiz = await _quizService.Add(quiz);
-            return Ok(addedQuiz);
+            return Ok(new GeneralResponseDto
+            {
+                statusCode = StatusCodes.Status200OK,
+                message = "Quiz added successfully",
+                data = addedQuiz
+            });
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateQuiz(string id, [FromBody] RequestUpdateQuizeDto quiz)
@@ -33,11 +44,21 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var updatedQuiz = await _quizService.Update(id, quiz);
-                return Ok(updatedQuiz);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Quiz updated successfully",
+                    data = updatedQuiz
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                    data = null
+                });
             }
         }
         [HttpDelete]
@@ -46,11 +67,21 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var result = await _quizService.Delete(id);
-                return Ok(result);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Quiz deleted successfully",
+                    data = result
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                    data = null
+                });
             }
         }
     }
