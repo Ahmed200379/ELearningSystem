@@ -6,8 +6,10 @@ using Shared.Dtos.Material;
 
 namespace ELearningSystem.Controllers.V1
 {
-    [Route("api/{version:apiVersion}/[controller]")]
-    public class MaterialController : Controller
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
+    [ApiVersion("1.0")]
+    public class MaterialController : ControllerBase
     {
         private readonly IMaterialService _materialService;
         public MaterialController(IMaterialService materialService)
@@ -15,7 +17,7 @@ namespace ELearningSystem.Controllers.V1
             _materialService = materialService;
         }
         [HttpPost("Material/create")]
-        public async Task<IActionResult> Create([FromBody] AddMaterialDto addMaterialDto,[FromBody]IFormFile file)
+        public async Task<IActionResult> Create([FromBody] AddMaterialDto addMaterialDto,IFormFile file)
         {
             if (!ModelState.IsValid)
             {

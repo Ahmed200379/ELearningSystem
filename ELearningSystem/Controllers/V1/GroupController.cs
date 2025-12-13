@@ -1,82 +1,135 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Dtos.Group;
 
 namespace ELearningSystem.Controllers.V1
 {
-    public class GroupController : Controller
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiController]
+    [ApiVersion("1.0")]
+    public class GroupController : ControllerBase
     {
-        // GET: GroupController
-        public ActionResult Index()
+        private readonly IGroupServices _groupServices;
+        public GroupController(IGroupServices groupServices)
         {
-            return View();
+            _groupServices = groupServices;
         }
-
-        // GET: GroupController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: GroupController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: GroupController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [HttpGet("group/getall")]
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var result = await _groupServices.GetAllGroups();
+                return Ok(result);
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        // GET: GroupController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: GroupController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [HttpGet("group/getByCourseName")]
+        public async Task<IActionResult> GetByName(string courseName)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var result = await _groupServices.GetGroupsByCourseName(courseName);
+                return Ok(result);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
-        // GET: GroupController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: GroupController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [HttpGet("group/getAllInPagination{pageNumber}/{pageSize}")]
+        public async Task<IActionResult> GetAllInPagination(int pageNumber,int pageSize)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var result = await _groupServices.GetAllInPagination(pageNumber, pageSize);
+                return Ok(result);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("group/getById/{groupId}")]
+        public async Task<IActionResult> GetById(string groupId)
+        {
+            try
+            {
+                var result = await _groupServices.GetGroupById(groupId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpDelete("group/delete/{groupId}")]
+        public async Task<IActionResult> Delete(string groupId)
+        {
+            try
+            {
+                var result = await _groupServices.DeleteGroup(groupId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+        [HttpPost("group/creategroup")]
+        public async Task<IActionResult> Create([FromBody]CreateGroupDto createGroupDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.SelectMany(m => m.Value!.Errors).Select(e => e.ErrorMessage));
+            }
+            try
+            {
+                var result = await _groupServices.CreateGroup(createGroupDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpPost("group/addstudent")]
+        public async Task<IActionResult> Add([FromBody] AddStudentDto addStudentDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.SelectMany(m => m.Value!.Errors).Select(e => e.ErrorMessage));
+            }
+            try
+            {
+                var result = await _groupServices.AddStudentToGroup(addStudentDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpPut("group/updategroup")]
+        public async Task<IActionResult> Update([FromBody] UpdateGroupDto updateGroupDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.SelectMany(m => m.Value!.Errors).Select(e => e.ErrorMessage));
+            }
+            try
+            {
+                var result = await _groupServices.UpdateGroup(updateGroupDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }
