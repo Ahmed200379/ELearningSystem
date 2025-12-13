@@ -9,8 +9,8 @@ namespace Domain.Entities
    public class Group:Base
     {
         public string Title { get; set; }=string.Empty;
-        public string Description { get; set; }=string.Empty ;
-        public string CourseName { get; set; } = string.Empty ;
+        public string Description { get; set; }=string.Empty;
+        public string CourseName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }=DateTime.Now;
         public decimal SubscriptionFee { get; set; }
         public virtual ICollection<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
