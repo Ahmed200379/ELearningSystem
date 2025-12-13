@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
+using Shared.Dtos;
 using Shared.Dtos.Answer;
 
 namespace ELearningSystem.Controllers.V1
@@ -20,7 +22,12 @@ namespace ELearningSystem.Controllers.V1
         public async Task<IActionResult> GetAllAnswers()
         {
             var answers = await _answerService.GetAllAnswers();
-            return Ok(answers);
+            return Ok(new GeneralResponseDto
+            {
+                statusCode = StatusCodes.Status200OK,
+                message = "Answers retrieved successfully",
+                data = answers,
+            });
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAnswerById(string id)
@@ -28,18 +35,43 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var answer = await _answerService.GetAnswerById(id);
-                return Ok(answer);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Answer retrieved successfully",
+                    data = answer,
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                });
             }
         }
         [HttpPost]
         public async Task<IActionResult> CreateAnswer([FromBody] RequestAnswerDto answerDto)
         {
-            var createdAnswer = await _answerService.CreateAnswer(answerDto);
-            return Ok(createdAnswer);
+            try
+            {
+                var createdAnswer = await _answerService.CreateAnswer(answerDto);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status201Created,
+                    message = "Answer created successfully",
+                    data = createdAnswer,
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status400BadRequest,
+                    message = ex.Message,
+                });
+            }
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAnswer(string id, [FromBody] RequestAnswerDto answerDto)
@@ -47,11 +79,20 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var updatedAnswer = await _answerService.UpdateAnswer(id, answerDto);
-                return Ok(updatedAnswer);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Answer updated successfully",
+                    data = updatedAnswer,
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                });
             }
         }
         [HttpDelete]
@@ -60,11 +101,20 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var result = await _answerService.DeleteAnswer(id);
-                return Ok(result);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Answer deleted successfully",
+                    data = result,
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                });
             }
         }
     }

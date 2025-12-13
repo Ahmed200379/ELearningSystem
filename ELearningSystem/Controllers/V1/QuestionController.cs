@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
+using Shared.Dtos;
 using Shared.Dtos.Question;
 
 namespace ELearningSystem.Controllers.V1
@@ -19,7 +20,12 @@ namespace ELearningSystem.Controllers.V1
         public async Task<IActionResult> GetAllQuestions()
         {
             var questions = await _questionService.GetAllQuestionsAsync();
-            return Ok(questions);
+            return Ok(new GeneralResponseDto
+            {
+                statusCode = StatusCodes.Status200OK,
+                message = "Questions retrieved successfully",
+                data = questions,
+            });
         }
         [HttpGet("id")]
         public async Task<IActionResult> GetQuestionById(string id)
@@ -27,18 +33,32 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var question = await _questionService.GetQuestionByIdAsync(id);
-                return Ok(question);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Question retrieved successfully",
+                    data = question,
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                });
             }
         }
         [HttpPost]
         public async Task<IActionResult> CreateQuestion([FromBody] RequestQuestionDto question)
         {
             var createdQuestion = await _questionService.CreateQuestionAsync(question);
-            return Ok(createdQuestion);
+            return Ok(new GeneralResponseDto
+            {
+                statusCode = StatusCodes.Status200OK,
+                message = "Question created successfully",
+                data = createdQuestion,
+            });
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateQuestion(string id, [FromBody]RequestQuestionDto question)
@@ -46,11 +66,20 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var updatedQuestion = await _questionService.UpdateQuestionAsync(id, question);
-                return Ok(updatedQuestion);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Question updated successfully",
+                    data = updatedQuestion,
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                });
             }
         }
         [HttpDelete]
@@ -59,11 +88,20 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var result = await _questionService.DeleteQuestionAsync(id);
-                return Ok(result);
+                return Ok(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status200OK,
+                    message = "Question deleted successfully",
+                    data = result,
+                });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new GeneralResponseDto
+                {
+                    statusCode = StatusCodes.Status404NotFound,
+                    message = ex.Message,
+                });
             }
         }
     }
