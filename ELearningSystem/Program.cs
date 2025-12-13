@@ -1,10 +1,17 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NETCore.MailKit.Core;
+using Persistence;
 using Persistence.Data;
+using Persistence.Repos;
+using Persistence.Storage;
+using Services;
+using Services.Abstractions;
 using Shared.Helpers;
 using System.Text;
 
@@ -92,6 +99,10 @@ namespace ELearningSystem
                 options.GroupNameFormat = "'v'VVV"; // v1 / v2
                 options.SubstituteApiVersionInUrl = true;
             });
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+
+            builder.Services.AddApplicationServices(builder.Configuration);
+
             // إضافة DbContext مع سلسلة الاتصال
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
