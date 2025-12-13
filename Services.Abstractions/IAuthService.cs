@@ -15,6 +15,6 @@ namespace Domain.Interfaces
         public Task<GeneralResponseDto> Login(LoginDto loginDto);
         public Task<GeneralResponseDto> ForgetPassword(string Email);
         public Task<GeneralResponseDto> ResetPassword(ResetPasswordDto resetPasswordDto);
-        public Task<GeneralResponseDto> VarifyOtpForPassword(VerifyOtpDto verifyOtpDto);
+        public Task<GeneralResponseDto> VerifyOtpForPassword(VerifyOtpDto verifyOtpDto);
     }
 }

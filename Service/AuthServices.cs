@@ -135,7 +135,7 @@ namespace Services
 
         }
 
-        public async Task<GeneralResponseDto> VarifyOtpForPassword(VerifyOtpDto verifyOtpDto)
+        public async Task<GeneralResponseDto> VerifyOtpForPassword(VerifyOtpDto verifyOtpDto)
         {
             if (!_memoryCache.TryGetValue(verifyOtpDto.Email, out string? otp))
             {

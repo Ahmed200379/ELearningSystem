@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NETCore.MailKit.Core;
+using NETCore.MailKit.Extensions;
+using NETCore.MailKit.Infrastructure.Internal;
 using Persistence;
 using Persistence.Data;
 using Persistence.Repos;
@@ -28,11 +30,9 @@ namespace ELearningSystem
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                // مهم: هنجيب Version Provider بعد Build
                 var sp = builder.Services.BuildServiceProvider();
                 var provider = sp.GetRequiredService<IApiVersionDescriptionProvider>();
 
-                // إنشاء SwaggerDoc لكل Version
                 foreach (var desc in provider.ApiVersionDescriptions)
                 {
                     c.SwaggerDoc(desc.GroupName, new OpenApiInfo
@@ -99,11 +99,14 @@ namespace ELearningSystem
                 options.GroupNameFormat = "'v'VVV"; // v1 / v2
                 options.SubstituteApiVersionInUrl = true;
             });
+            builder.Services.AddMailKit(config =>
+            {
+                config.UseMailKit(builder.Configuration.GetSection("Email").Get<MailKitOptions>());
+            });
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
             builder.Services.AddApplicationServices(builder.Configuration);
 
-            // إضافة DbContext مع سلسلة الاتصال
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

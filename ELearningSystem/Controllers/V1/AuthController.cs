@@ -57,7 +57,7 @@ namespace ELearningSystem.Controllers.V1
         [HttpPost("verifyotpforpassword")]
         public async Task<IActionResult> VerifyCode([FromBody] VerifyOtpDto verifyOtpDto)
         {
-            var result = await _authService.VarifyOtpForPassword(verifyOtpDto);
+            var result = await _authService.VerifyOtpForPassword(verifyOtpDto);
             if (!result.IsSuccess)
             {
                 return BadRequest(result);
