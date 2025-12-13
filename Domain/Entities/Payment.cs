@@ -9,11 +9,20 @@ namespace Domain.Entities
 {
     public class Payment:Base
     {
-        public double Amount { get; set; } = 0.0;
-        public DateTime PaidAt { get; set; }=DateTime.Now;
-        public bool Status { get; set; }= false;
-        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.VesaPay;
+        public decimal Amount { get; set; }
+
+        public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
+
+        public PaymentMethod Method { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? PaidAt { get; set; }
+
+        public string GroupId { get; set; }
+        public Group Group { get; set; }
+
         public string UserId { get; set; }
-        public virtual User User { get; set; }
+        public User User { get; set; }
     }
 }

@@ -9,6 +9,7 @@ namespace Persistence.Data.Configurations
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
             builder.HasKey(p => p.Id);
+            builder.HasOne(p=> p.Group).WithMany().HasForeignKey(p=> p.GroupId).OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -32,4 +32,11 @@ namespace Shared.Enums
     {
         Choose
     }
+    public enum PaymentStatus
+    {
+        Pending,
+        Completed,
+        Failed,
+        Canceled
+    }
 }
