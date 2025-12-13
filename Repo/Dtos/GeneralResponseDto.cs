@@ -8,6 +8,7 @@ namespace Shared.Dtos
 {
    public class GeneralResponseDto
     {
+        public int statusCode { get; set; }
         public  bool IsSuccess { get; set; }
         public string message { get; set; } = string.Empty;
         public object? data { get; set; } = null;
