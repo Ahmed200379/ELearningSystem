@@ -20,10 +20,8 @@ namespace Services
         }
         public async Task<IEnumerable<ResponseQuestionDto>> GetAllQuestionsAsync()
         {
-            Expression<Func<Question , object>> includes = q => new
-            {
-                q.Answers
-            };
+            Expression<Func<Question, object>> includes = q => q.Answers;
+
             var questions = await _unitOfWork.GetRepository<Question>().GetAllAsyncs(includes: includes);
             var response = questions.Select(q => new ResponseQuestionDto
             {
@@ -46,10 +44,7 @@ namespace Services
 
         public async Task<ResponseQuestionDto> GetQuestionByIdAsync(string id)
         {
-            Expression<Func<Question, object>> includes = q => new
-            {
-                q.Answers
-            };
+            Expression<Func<Question, object>> includes = q => q.Answers;
             var question = await _unitOfWork.GetRepository<Question>().GetFirstOrDefault(q => q.Id == id, includes: includes);
             if (question == null)
             {

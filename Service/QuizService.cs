@@ -20,7 +20,7 @@ namespace Services
         public async Task<IEnumerable<ResponseQuizDto>> GetAll()
         {
             Expression<Func<Quiz, object>>[] includes = {
-                q => q.Questions!.Select(ques => ques.Answers)
+                q => q.Questions
             };
             var quizzes = await _unitOfWork.GetRepository<Quiz>().GetAllAsyncs
                 (

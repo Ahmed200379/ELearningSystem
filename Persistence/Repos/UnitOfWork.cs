@@ -12,10 +12,12 @@ namespace Persistence.Repos
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
-        private readonly Dictionary<string, object> _repositories;
+        private Dictionary<Type, object> _repositories;
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
+            _repositories = new Dictionary<Type, object>();
+
         }
 
         public async Task<int> SaveChanges()
@@ -25,14 +27,17 @@ namespace Persistence.Repos
 
         public IGeneticRepo<T> GetRepository<T>() where T : class
         {
-            var type = typeof(T).Name;
-            if (!_repositories.ContainsKey(type))
+            var type = typeof(T);
+
+            if (!_repositories.TryGetValue(type, out var repo))
             {
-                return (IGeneticRepo<T>) _repositories[type];
+                repo = new GeneticRepo<T>(_context, _context.Set<T>());
+                _repositories[type] = repo;
             }
-            var repo = new GeneticRepo<T>(_context, _context.Set<T>());
-            _repositories[type] = repo;
-            return repo;
+
+            return (IGeneticRepo<T>)repo;
         }
+
+
     }
 }
