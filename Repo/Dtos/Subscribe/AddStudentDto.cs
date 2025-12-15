@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Dtos.Group
+namespace Shared.Dtos.Subscribe
 {
     [NoSpaces]
     public class AddStudentDto

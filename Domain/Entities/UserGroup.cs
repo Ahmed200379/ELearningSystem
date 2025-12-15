@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace Domain.Entities
         public DateTime SupscriptionTime { get; set; } = DateTime.Now;
         public bool IsActive { get; set; } = false;
         public DateTime ExpirationDate { get; set; }
+        public Role RoleInGroup { get; set; }
         public string UserId { get; set; }
         public virtual User User { get; set; }
         public string GroupId { get; set; }
