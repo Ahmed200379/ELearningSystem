@@ -8,5 +8,6 @@ namespace Services.Abstractions
 {
     public interface IPaymentServices
     {
+
     }
 }

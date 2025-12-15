@@ -98,23 +98,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpPost("group/addstudent")]
-        public async Task<IActionResult> Add([FromBody] AddStudentDto addStudentDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState.SelectMany(m => m.Value!.Errors).Select(e => e.ErrorMessage));
-            }
-            try
-            {
-                var result = await _groupServices.AddStudentToGroup(addStudentDto);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
+       
         [HttpPut("group/updategroup")]
         public async Task<IActionResult> Update([FromBody] UpdateGroupDto updateGroupDto)
         {

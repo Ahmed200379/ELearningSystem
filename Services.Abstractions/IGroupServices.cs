@@ -17,6 +17,5 @@ namespace Domain.Interfaces
         public Task<GeneralResponseDto> GetGroupById(string groupId);
         public Task<GeneralResponseDto> GetGroupsByCourseName(string title);
         public Task<GeneralResponseDto> GetAllInPagination(int pageNumber, int pageSize);
-        public Task<GeneralResponseDto> AddStudentToGroup(AddStudentDto addStudentToGroupDto);
     }
 }

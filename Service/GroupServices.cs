@@ -16,39 +16,6 @@ namespace Services
             _userManager = userManager;
         }
 
-        public async Task<GeneralResponseDto> AddStudentToGroup(AddStudentDto addStudentToGroupDto)
-        {
-            var student= await _userManager.FindByEmailAsync(addStudentToGroupDto.Email);
-            if (student == null)
-            {
-                return new GeneralResponseDto
-                {
-                    IsSuccess = false,
-                    message = "User not found with this email."
-                };
-            }
-            var joinstudent = new UserGroup()
-            {
-                GroupId = addStudentToGroupDto.GroupId,
-                UserId = student.Id,
-            };
-            await _unitOfWork.GetRepository<UserGroup>().AddAsync(joinstudent);
-            var result = await _unitOfWork.SaveChanges();
-            if (result == 0)
-            {
-                return new GeneralResponseDto
-                {
-                    IsSuccess = false,
-                    message = "Failed to add student to group."
-                };
-            }
-            return new GeneralResponseDto
-            {
-                IsSuccess = true,
-                message = "Student added to group successfully."
-            };
-        }
-
         public async Task<GeneralResponseDto> CreateGroup(CreateGroupDto createGroupDto)
         {
             var group = new Group

@@ -93,9 +93,11 @@ namespace ELearningSystem
                 options.GroupNameFormat = "'v'VVV"; // v1 / v2
                 options.SubstituteApiVersionInUrl = true;
             });
+         //   builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSetting"));
+
             builder.Services.AddMailKit(config =>
             {
-                config.UseMailKit(builder.Configuration.GetSection("Email").Get<MailKitOptions>());
+                config.UseMailKit(builder.Configuration.GetSection("EmailSetting").Get<MailKitOptions>());
             });
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
