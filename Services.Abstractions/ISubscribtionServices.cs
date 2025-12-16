@@ -6,6 +6,6 @@ namespace Services.Abstractions
     public interface ISubscribtionServices
     {
         public Task<GeneralResponseDto> AddStudentToGroup(AddStudentDto addStudentToGroupDto);
-        public Task<GeneralResponseDto> UpdateSubscribeManually()
+        public Task<GeneralResponseDto> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto);
     }
 }

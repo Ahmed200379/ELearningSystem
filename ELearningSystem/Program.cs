@@ -43,7 +43,7 @@ namespace ELearningSystem
                     Description = "Enter JWT Bearer token **_only_**",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",  // لازم lower case
+                    Scheme = "bearer",  
                     BearerFormat = "JWT",
                     Reference = new OpenApiReference
                     {
@@ -80,7 +80,7 @@ namespace ELearningSystem
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
                 };
             });
-
+            builder.Services.AddHostedService<BackgroundService>();
             builder.Services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;

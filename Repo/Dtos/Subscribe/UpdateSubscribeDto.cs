@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 namespace Shared.Dtos.Subscribe
 {
     [NoSpaces]
-    public class AddStudentDto
+    public class UpdateSubscribeDto
     {
-        [EmailAddress]
         [Required]
+        [EmailAddress]
         public string Email { get; set; }=string.Empty;
         [Required]
-        public string GroupId { get; set; }=string.Empty ;
+        public string GroupId { get; set; } = string.Empty;
         [Required]
         public int DurationInMonths { get; set; }
     }
-
 }

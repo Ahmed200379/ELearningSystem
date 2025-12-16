@@ -32,7 +32,7 @@ namespace Services
                 UserId = student.Id,
                 SupscriptionTime = DateTime.UtcNow,
                 IsActive = true,
-                ExpirationDate = DateTime.UtcNow.AddMonths(1)
+                ExpirationDate = DateTime.UtcNow.AddMonths(addStudentToGroupDto.DurationInMonths)
             };
             await _unitOfWork.GetRepository<UserGroup>().AddAsync(joinstudent);
             var result = await _unitOfWork.SaveChanges();
@@ -48,6 +48,36 @@ namespace Services
             {
                 IsSuccess = true,
                 message = "Student added to group successfully."
+            };
+        }
+
+        public async Task<GeneralResponseDto> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto)
+        {
+            var user= await _unitOfWork.GetRepository<UserGroup>().GetFirstOrDefault(u=>u.GroupId==updateSubscribeDto.GroupId && u.User.Email==updateSubscribeDto.Email); 
+            if (user == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "User not found with this email."
+                };
+            }
+            user.ExpirationDate.AddMonths(updateSubscribeDto.DurationInMonths);
+            user.IsActive = true;
+            _unitOfWork.GetRepository<UserGroup>().Update(user);
+            var result= await _unitOfWork.SaveChanges();
+            if (result == 0)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Failed to update subscribtion."
+                };
+            }
+            return new GeneralResponseDto
+            {
+                IsSuccess = true,
+                message = "Subscribe updated successfully."
             };
         }
     }
