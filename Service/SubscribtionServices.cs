@@ -53,7 +53,7 @@ namespace Services
 
         public async Task<GeneralResponseDto> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto)
         {
-            var user= await _unitOfWork.GetRepository<UserGroup>().GetFirstOrDefault(u=>u.GroupId==updateSubscribeDto.GroupId && u.User.Email==updateSubscribeDto.Email); 
+            var user= await _unitOfWork.GetRepository<UserGroup>().GetFirstOrDefault(u=>u.GroupId==updateSubscribeDto.GroupId && u.UserId==updateSubscribeDto.UserId); 
             if (user == null)
             {
                 return new GeneralResponseDto

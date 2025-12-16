@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Services.Abstractions;
 using Shared.Enums;
@@ -13,16 +14,18 @@ namespace Services
 {
     public class BackgroundServices:BackgroundService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public BackgroundServices(IUnitOfWork unitOfWork)
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        public BackgroundServices(IServiceScopeFactory serviceScopeFactory)
         {
-            _unitOfWork = unitOfWork;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while(!stoppingToken.IsCancellationRequested)
             {
+                using var scopped = _serviceScopeFactory.CreateScope();
+                var _unitOfWork = scopped.ServiceProvider.GetRequiredService<IUnitOfWork>();
                 var expiredSubscriptions = await _unitOfWork.GetRepository<UserGroup>()
                     .GetAllAsyncs(ug=>ug.IsActive==true && ug.ExpirationDate<=DateTime.UtcNow && ug.RoleInGroup==Role.Student);
                 if (expiredSubscriptions.Any())

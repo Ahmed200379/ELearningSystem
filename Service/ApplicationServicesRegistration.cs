@@ -17,6 +17,8 @@ namespace Services
             services.AddScoped<IMaterialService, MaterialService>();
             services.AddScoped<IQuizService, QuizService>();
             services.AddScoped<IAuthService, AuthServices>();
+            services.AddScoped<ISubscribtionServices, SubscribtionServices>();
+            services.AddScoped<IPaymentServices, PaymentServices>();
             // Register application services here
             return services;
         }

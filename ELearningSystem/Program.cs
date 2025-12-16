@@ -10,6 +10,7 @@ using Persistence;
 using Persistence.Data;
 using Services;
 using Shared.Helpers;
+using Stripe;
 using System.Text;
 
 namespace ELearningSystem
@@ -80,7 +81,7 @@ namespace ELearningSystem
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
                 };
             });
-            builder.Services.AddHostedService<BackgroundService>();
+            builder.Services.AddHostedService<BackgroundServices>();
             builder.Services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
@@ -94,7 +95,7 @@ namespace ELearningSystem
                 options.SubstituteApiVersionInUrl = true;
             });
          //   builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSetting"));
-
+            StripeConfiguration.ApiKey= builder.Configuration.GetSection("Stripe")["SecretKey"];
             builder.Services.AddMailKit(config =>
             {
                 config.UseMailKit(builder.Configuration.GetSection("EmailSetting").Get<MailKitOptions>());
