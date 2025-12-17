@@ -94,7 +94,6 @@ namespace ELearningSystem
                 options.GroupNameFormat = "'v'VVV"; // v1 / v2
                 options.SubstituteApiVersionInUrl = true;
             });
-         //   builder.Services.Configure<MailSetting>(builder.Configuration.GetSection("MailSetting"));
             StripeConfiguration.ApiKey= builder.Configuration.GetSection("Stripe")["SecretKey"];
             builder.Services.AddMailKit(config =>
             {

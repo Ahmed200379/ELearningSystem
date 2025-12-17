@@ -20,6 +20,7 @@ namespace Services
         {
             var group = new Group
             {
+                Id = Guid.NewGuid().ToString(),
                 Title = createGroupDto.Title,
                 Description = createGroupDto.Description,
                 CourseName = createGroupDto.NameOfCourse,

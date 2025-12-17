@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Shared.Enums;
+using Shared.Helpers.Validation;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +12,12 @@ namespace Domain.Entities
 {
    public class User :IdentityUser
     {
+        [Required]
+        [NoSpaces]
+        public string FirstName { get; set; } = string.Empty;
+        [NoSpaces]
+        [Required]
+        public string SecondName { get; set; } = string.Empty;
         public string? photoUrl { get; set; }
         public string ParentNumber { get; set; } = string.Empty;
         public virtual ICollection<UserGroup> UserGroups { get; set; } = new List<UserGroup>();

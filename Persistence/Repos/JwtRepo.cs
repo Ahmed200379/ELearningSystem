@@ -51,6 +51,7 @@ namespace Persistence.Repos
                 expires: DateTime.UtcNow.AddMinutes(jwtOptions.LifeTime),
                 signingCredentials: signingCredentials
                 );
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             return token;
         }
     }

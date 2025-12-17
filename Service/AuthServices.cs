@@ -6,6 +6,7 @@ using NETCore.MailKit.Core;
 using Shared.Dtos;
 using Shared.Dtos.Auth;
 using Shared.Helpers;
+using System.IdentityModel.Tokens.Jwt;
 namespace Services
 {
     public class AuthServices : IAuthService
@@ -62,11 +63,12 @@ namespace Services
                 };
             }
             var token = await _jwtRepo.GenerateToken(user);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             return new GeneralResponseDto
             {
                 IsSuccess = true,
                 message = "Login successful.",
-                data = token
+                data = tokenString
             };
         }
 
@@ -181,7 +183,9 @@ namespace Services
             }
             var newUser = new User
             {
-                UserName = cashedUser.registerDto.FirstName + " " + cashedUser.registerDto.LastName,
+                FirstName = cashedUser.registerDto.FirstName,
+                SecondName=cashedUser.registerDto.LastName,
+                UserName = cashedUser.registerDto.FirstName+cashedUser.registerDto.LastName,
                 Email = cashedUser.registerDto.Email,
                 PhoneNumber = cashedUser.registerDto.PhoneNumber,
                 Id = Guid.NewGuid().ToString(),
@@ -199,6 +203,7 @@ namespace Services
                 };
             }
             var token = await _jwtRepo.GenerateToken(newUser);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             _memoryCache.Remove(verifyOtpDto.Email);
 
 
@@ -206,7 +211,7 @@ namespace Services
             {
                 IsSuccess = true,
                 message = "User registered successfully.",
-                data=token,
+                data=tokenString,
             };
 
         }

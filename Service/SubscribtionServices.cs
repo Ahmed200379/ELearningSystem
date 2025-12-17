@@ -62,7 +62,7 @@ namespace Services
                     message = "User not found with this email."
                 };
             }
-            user.ExpirationDate.AddMonths(updateSubscribeDto.DurationInMonths);
+            user.ExpirationDate=DateTime.UtcNow.AddMonths(updateSubscribeDto.DurationInMonths);
             user.IsActive = true;
             _unitOfWork.GetRepository<UserGroup>().Update(user);
             var result= await _unitOfWork.SaveChanges();
