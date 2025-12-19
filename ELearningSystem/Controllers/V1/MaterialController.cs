@@ -17,7 +17,7 @@ namespace ELearningSystem.Controllers.V1
             _materialService = materialService;
         }
         [HttpPost("Material/create")]
-        public async Task<IActionResult> Create([FromBody] AddMaterialDto addMaterialDto,IFormFile file)
+        public async Task<IActionResult> Create([FromForm] AddMaterialDto addMaterialDto)
         {
             if (!ModelState.IsValid)
             {
@@ -25,7 +25,7 @@ namespace ELearningSystem.Controllers.V1
             }
             try
             {
-                var result = await _materialService.AddMaterial(addMaterialDto,file);
+                var result = await _materialService.AddMaterial(addMaterialDto);
                 return Ok(result);
             }
             catch (Exception ex)

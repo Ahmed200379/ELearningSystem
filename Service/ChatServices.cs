@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 using Services.Abstractions;
 using Shared.Dtos;
 using Shared.Dtos.Chat;
-
 namespace Services
 {
     public class ChatServices :IChatServices
@@ -116,6 +115,7 @@ namespace Services
         {
             var chatMessage = new Chat
             {
+                Id=Guid.NewGuid().ToString(),
                 GroupId = sendMessageDto.GroupId,
                 UserId = sendMessageDto.UserId,
                 Message = sendMessageDto.Message,

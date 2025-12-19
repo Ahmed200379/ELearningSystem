@@ -21,9 +21,9 @@ namespace Services
             _unitOfWork = unitOfWork;
             _imageStorage = imageStorage;
         }
-        public async Task<GeneralResponseDto> AddMaterial(AddMaterialDto addMaterialDto,IFormFile file)
+        public async Task<GeneralResponseDto> AddMaterial(AddMaterialDto addMaterialDto)
         {
-            if (file == null)
+            if (addMaterialDto.File == null)
             {
                 return new GeneralResponseDto
                 {
@@ -32,7 +32,7 @@ namespace Services
                 };
             }
             var pathFolder = $"UploadedFiles/Materials/{addMaterialDto.GroupId}";
-            var filePath = await _imageStorage.SaveFile(file, pathFolder);
+            var filePath = await _imageStorage.SaveFile(addMaterialDto.File, pathFolder);
             if (filePath == null)
             {
                 return new GeneralResponseDto
@@ -43,6 +43,7 @@ namespace Services
             }
             var newMaterial = new Material
             { 
+                Id=Guid.NewGuid().ToString(),
                 Title = addMaterialDto.Title,
                 Description = addMaterialDto.Description,
                 File = filePath,

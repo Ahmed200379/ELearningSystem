@@ -93,16 +93,16 @@ namespace Persistence.Repos
             {
                 query = query.AsNoTracking();
             }
-            if (includes != null)
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+            if (includes is {Length:>0 })
             {
                 foreach (var include in includes)
                 {
                     query = query.Include(include);
                 }
-            }
-            if (predicate != null)
-            {
-                query = query.Where(predicate);
             }
             return await query.FirstOrDefaultAsync()!;
         }

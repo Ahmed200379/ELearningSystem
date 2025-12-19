@@ -5,7 +5,7 @@ namespace Services.Abstractions
 {
     public interface IMaterialService
     {
-        public Task<GeneralResponseDto> AddMaterial(AddMaterialDto addMaterialDto, IFormFile file);
+        public Task<GeneralResponseDto> AddMaterial(AddMaterialDto addMaterialDto);
         public Task<GeneralResponseDto> DeleteMaterial(string id);
         public Task<GeneralResponseDto> GetAllMaterial(string groupId);
     }

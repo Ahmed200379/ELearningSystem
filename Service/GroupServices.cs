@@ -3,7 +3,7 @@ using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Shared.Dtos;
 using Shared.Dtos.Group;
-
+using System.Linq.Expressions;
 namespace Services
 {
     public class GroupServices : IGroupServices
@@ -95,7 +95,12 @@ namespace Services
 
         public async Task<GeneralResponseDto> GetGroupById(string groupId)
         {
-            var group = await _unitOfWork.GetRepository<Group>().GetByIdAsync(groupId);
+            Expression<Func<Group, Object>>[] include =
+            {
+                g=>g.Materials
+            };
+            var group = await _unitOfWork.GetRepository<Group>().GetFirstOrDefault(predicate: g => g.Id == groupId,includes:include);
+            
             if (group == null)
             {
                 return new GeneralResponseDto
@@ -108,7 +113,7 @@ namespace Services
             {
                 IsSuccess = true,
                 message = "Group retrieved successfully.",
-                data = group
+               // data = group
             };
         }
 

@@ -20,6 +20,8 @@ namespace Shared.Dtos.Material
         [Required]
         public TypeOfMaterial Type { get; set; } = TypeOfMaterial.Book;
         [Required]
+        public IFormFile File { get; set; }
+        [Required]
         public string GroupId { get; set; } = string.Empty;
     }
 

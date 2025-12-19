@@ -2,6 +2,7 @@
 using Services.Abstractions;
 using Shared.Dtos.Chat;
 using Shared.Dtos.Subscribe;
+using System.Threading.Tasks;
 
 namespace ELearningSystem.Controllers.V1
 {
@@ -16,7 +17,7 @@ namespace ELearningSystem.Controllers.V1
             _subscribtionServices = subscribtionServices;
         }
         [HttpPost("Subscribe/AddStudentToGroup")]
-        public IActionResult AddStudentToGroup( AddStudentDto addStudentDto)
+        public async Task<IActionResult> AddStudentToGroup( AddStudentDto addStudentDto)
         {
             if (!ModelState.IsValid)
             {
@@ -24,7 +25,7 @@ namespace ELearningSystem.Controllers.V1
             }
             try
             {
-                var result = _subscribtionServices.AddStudentToGroup(addStudentDto);
+                var result = await _subscribtionServices.AddStudentToGroup(addStudentDto);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -33,7 +34,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
     [HttpPost("Subscribe/UpdateSubscribe")]
-        public IActionResult UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto)
+        public async Task<IActionResult> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto)
         {
             if (!ModelState.IsValid)
             {
@@ -41,7 +42,7 @@ namespace ELearningSystem.Controllers.V1
             }
             try
             {
-                var result = _subscribtionServices.UpdateSubscribeManually(updateSubscribeDto);
+                var result = await _subscribtionServices.UpdateSubscribeManually(updateSubscribeDto);
                 return Ok(result);
             }
             catch (Exception ex)

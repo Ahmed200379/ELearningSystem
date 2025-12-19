@@ -10,6 +10,7 @@ using Shared.Dtos.Payment;
 using Shared.Dtos.Subscribe;
 using Shared.Enums;
 using Stripe;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 namespace Services
@@ -27,7 +28,8 @@ namespace Services
         }
         public async Task<GeneralResponseDto> CreatePayment(CreatePaymentDto createPaymentDto)
         {
-            var student = await _unitOfWork.GetRepository<UserGroup>().GetFirstOrDefault(ug=>ug.UserId==createPaymentDto.StudentId && ug.GroupId==createPaymentDto.GroupId);
+             Expression<Func<UserGroup,Object>>[] include = { us=>us.Group };
+            var student = await _unitOfWork.GetRepository<UserGroup>().GetFirstOrDefault(predicate:ug=>ug.UserId==createPaymentDto.StudentId && ug.GroupId==createPaymentDto.GroupId,includes:include);
             if (student == null)
             {
                 return new GeneralResponseDto
@@ -48,7 +50,7 @@ namespace Services
             };
             var options = new PaymentIntentCreateOptions
             {
-                    Amount=(long)(student.Group.SubscriptionFee* 100),
+                    Amount=(long)(1000* 100),
                     Currency=createPaymentDto.Currency,
                     AutomaticPaymentMethods = new()
                     {
@@ -74,6 +76,7 @@ namespace Services
                     message = "Failed to create payment record.",
                 };
             }
+            Console.WriteLine(paymentIntent.Id);
             return new GeneralResponseDto
             {
                 IsSuccess = true,
