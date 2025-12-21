@@ -46,7 +46,7 @@ namespace Services
             };
             var options = new PaymentIntentCreateOptions
             {
-                    Amount=(long)(1000* 100),
+                    Amount=(long)(createPaymentDto.Amount* 100),
                     Currency=createPaymentDto.Currency,
                     AutomaticPaymentMethods = new()
                     {
@@ -72,7 +72,6 @@ namespace Services
                     message = "Failed to create payment record.",
                 };
             }
-            Console.WriteLine(paymentIntent.Id);
             return new GeneralResponseDto
             {
                 IsSuccess = true,
