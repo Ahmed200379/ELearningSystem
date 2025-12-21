@@ -3,6 +3,7 @@ using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Shared.Dtos;
 using Shared.Dtos.Group;
+using Shared.Dtos.Material;
 using System.Linq.Expressions;
 namespace Services
 {
@@ -74,6 +75,15 @@ namespace Services
         public async Task<GeneralResponseDto> GetAllGroups()
         {
             var groups = await _unitOfWork.GetRepository<Group>().GetAllAsync();
+            var groupDto= groups.Select(g=> new ReadAllGroupsDto
+            {
+                Id= g.Id,
+                Title=g.Title,
+                Description=g.Description,
+                CourseName = g.CourseName,
+                CreatedAt = g.CreatedAt
+            }).ToList();
+
             return new GeneralResponseDto
             {
                 IsSuccess = true,
@@ -85,11 +95,25 @@ namespace Services
         public async Task<GeneralResponseDto> GetAllInPagination(int pageNumber, int pageSize)
         {
             var groups = await _unitOfWork.GetRepository<Group>().GetAllAsyncs(PageNumber: pageNumber, PageSize: pageSize);
+            var groupsDto = groups.Select(g => new ReadAllGroupsDto
+            {
+                CourseName= g.CourseName,
+                CreatedAt= g.CreatedAt,
+                Description=g.Description,
+                Id= g.Id,
+                SubscriptionFee= g.SubscriptionFee,
+                Title = g.Title
+            }).ToList();
+            var groupInPagnationDto = new ReadAllGroupsInPagnation
+            {
+                Groups = groupsDto,
+                TotalCount = groups.Count()
+            };
             return new GeneralResponseDto
             {
                 IsSuccess = true,
                 message = "Groups retrieved successfully.",
-                data = groups
+                data = groupInPagnationDto
             };
         }
 
@@ -100,7 +124,25 @@ namespace Services
                 g=>g.Materials
             };
             var group = await _unitOfWork.GetRepository<Group>().GetFirstOrDefault(predicate: g => g.Id == groupId,includes:include);
-            
+            var groupDto = new ReadGroupInDetails
+            {
+                CourseName = group.CourseName,
+                CreatedAt = group.CreatedAt,
+                Description = group.Description,
+                Id = group.Id,
+                SubscriptionFee = group.SubscriptionFee,
+                Title = group.Title,
+                Materials = group.Materials.Select(m => new ReadMaterialDto
+                {
+                    File = m.File,
+                    Title = m.Title,
+                    Description = m.Description,
+                    AdditionDate = m.AdditionDate,
+                    Id = m.Id,
+                    Type = m.Type
+                }).ToList()
+
+            };
             if (group == null)
             {
                 return new GeneralResponseDto
@@ -113,13 +155,21 @@ namespace Services
             {
                 IsSuccess = true,
                 message = "Group retrieved successfully.",
-               // data = group
+                data = groupDto
             };
         }
 
         public async Task<GeneralResponseDto> GetGroupsByCourseName(string title)
         {
-            var groups=await _unitOfWork.GetRepository<Group>().GetFirstOrDefault(x=>x.Title==title);
+            var groups=await _unitOfWork.GetRepository<Group>().GetAllAsyncs(x=>x.Title==title);
+            var groupDto = groups.Select(g => new ReadAllGroupsDto
+            {
+                Id = g.Id,
+                Title = g.Title,
+                Description = g.Description,
+                CourseName = g.CourseName,
+                CreatedAt = g.CreatedAt
+            }).ToList();
             return new GeneralResponseDto
             {
                 IsSuccess = true,

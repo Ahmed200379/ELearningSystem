@@ -1,9 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
-using MailKit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Services.Abstractions;
 using Shared.Dtos;
 using Shared.Dtos.Payment;
@@ -11,7 +8,6 @@ using Shared.Dtos.Subscribe;
 using Shared.Enums;
 using Stripe;
 using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 
 namespace Services
 {

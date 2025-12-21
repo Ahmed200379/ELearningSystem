@@ -91,10 +91,43 @@ namespace Services
             };
         }
 
+        public async Task<GeneralResponseDto> GetMessageById(string chatId)
+        {
+            var message = await _unitOfWork.GetRepository<Chat>().GetByIdAsync(chatId);
+            if (message==null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Message not found",
+                };
+            }
+            var messageDto = new ReadMessageDto
+            {
+                GroupId=message.GroupId,
+                MessageId=message.Id,
+                SenderId=message.UserId,
+                Message=message.Message
+            };
+            return new GeneralResponseDto
+            {
+                data = messageDto,
+                IsSuccess = true,
+                message = "Message retrieved successfully",
+            };
+        }
+
         public async Task<GeneralResponseDto> GetMessages(string groupId)
         {
             var messages = await _unitOfWork.GetRepository<Chat>().GetAllAsyncs(c => c.GroupId == groupId);
             messages = messages.OrderBy(c => c.SendAt).ToList();
+            var messageDtos = messages.Select(m => new ReadMessageDto
+            {
+               GroupId=m.GroupId,
+               MessageId=m.Id,
+               SenderId=m.UserId,
+               Message=m.Message
+            }).ToList();
             if (messages==null)
             {
                 return new GeneralResponseDto
@@ -107,7 +140,7 @@ namespace Services
             {
                 IsSuccess = true,
                 message = "Messages retrieved successfully",
-                data = messages
+                data = messageDtos
             };
         }
 

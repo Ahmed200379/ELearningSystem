@@ -15,6 +15,5 @@ namespace Shared.Dtos.Material
         public string File { get; set; } = string.Empty;
         public DateTime AdditionDate { get; set; }
         public TypeOfMaterial Type { get; set; }
-        public string GroupId { get; set; }
     }
 }

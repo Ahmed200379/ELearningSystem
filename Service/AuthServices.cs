@@ -113,6 +113,15 @@ namespace Services
                     message = "User not found with this email."
                 };
             }
+            _memoryCache.TryGetValue(resetPasswordDto.Email, out string? cachedvalue);
+            if (cachedvalue != "Verified")
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "OTP has expired or is invalid."
+                };
+            }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var result = await _userManager.ResetPasswordAsync(
@@ -155,6 +164,7 @@ namespace Services
                     message = "Invalid OTP."
                 };
             }
+            _memoryCache.Set(verifyOtpDto.Email, "Verified", TimeSpan.FromMinutes(15));
             _memoryCache.Remove(verifyOtpDto.Email);
             return new GeneralResponseDto
             {

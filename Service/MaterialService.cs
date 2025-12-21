@@ -135,7 +135,6 @@ namespace Services
                 Description = m.Description,
                 File = m.File,
                 Type = m.Type,
-                GroupId = m.GroupId,
                 AdditionDate = m.AdditionDate 
             }).ToList();
             return new GeneralResponseDto

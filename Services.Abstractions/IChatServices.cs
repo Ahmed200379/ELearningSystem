@@ -14,5 +14,6 @@ namespace Services.Abstractions
          Task<GeneralResponseDto> GetMessages(string groupId);
          Task<GeneralResponseDto> DeleteMessage(DeleteMessageDto deleteMessageDto);
          Task<GeneralResponseDto> EditMessage(EditMessageDto editMessageDto);
+        Task<GeneralResponseDto> GetMessageById(string chatId);
     }
 }

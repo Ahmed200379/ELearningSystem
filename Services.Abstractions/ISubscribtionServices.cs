@@ -7,5 +7,8 @@ namespace Services.Abstractions
     {
         public Task<GeneralResponseDto> AddStudentToGroup(AddStudentDto addStudentToGroupDto);
         public Task<GeneralResponseDto> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto);
+        public Task<GeneralResponseDto> GetAllSubscribtionGroupsForStudent(string studentId);
+        public Task<GeneralResponseDto> CheckUserSubscriptionStatus(string userId, string groupId);
+        public Task<GeneralResponseDto> GetAllStudentsForSpecificGroup(string groupId);
     }
 }
