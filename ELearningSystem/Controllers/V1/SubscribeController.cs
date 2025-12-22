@@ -2,8 +2,6 @@
 using Services.Abstractions;
 using Shared.Dtos.Chat;
 using Shared.Dtos.Subscribe;
-using System.Threading.Tasks;
-
 namespace ELearningSystem.Controllers.V1
 {
     [Route("api/v{version:apiVersion}/[Controller]")]
@@ -50,7 +48,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpGet("Subscribe/CheckSubscriptionStatus")]
+        [HttpGet("Subscribe/CheckSubscriptionStatus/{userId}/{groupId}")]
         public async Task<IActionResult> CheckSubscriptionStatus(string userId, string groupId)
         {
             try
@@ -63,7 +61,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpGet("Subscribe/GetSubscribedGroups")]
+        [HttpGet("Subscribe/GetSubscribedGroups/{userId}")]
         public async Task<IActionResult> GetSubscribedGroups(string userId)
         {
             try
@@ -76,7 +74,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpGet("Subscribe/GetSubscribedStudents")]
+        [HttpGet("Subscribe/GetSubscribedStudents/{groupId}")]
         public async Task<IActionResult> GetSubscribedStudents(string groupId)
         {
             try
