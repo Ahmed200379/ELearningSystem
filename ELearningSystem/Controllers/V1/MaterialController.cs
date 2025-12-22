@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.Dtos.Chat;
 using Shared.Dtos.Material;
+using Shared.Dtos.Subscribe;
 
 namespace ELearningSystem.Controllers.V1
 {
@@ -26,6 +27,23 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var result = await _materialService.AddMaterial(addMaterialDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpPost("Material/AddVideoFromYoutube")]
+        public async Task<IActionResult> AddVideoFromYoutube([FromForm] AddMaterialFromYoutube addMaterialFromYoutube)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.SelectMany(e => e.Value!.Errors).Select(e => e.ErrorMessage));
+            }
+            try
+            {
+                var result = await _materialService.AddVideoFromYoutube(addMaterialFromYoutube);
                 return Ok(result);
             }
             catch (Exception ex)

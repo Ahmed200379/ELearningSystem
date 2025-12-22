@@ -19,7 +19,8 @@ namespace Shared.Enums
         Reference,
         Exam,
         Reverision,
-        video
+        video,
+        youtubevideo
     }
     public enum PaymentMethod
     {

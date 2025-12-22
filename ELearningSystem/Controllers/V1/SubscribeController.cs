@@ -17,11 +17,11 @@ namespace ELearningSystem.Controllers.V1
             _subscribtionServices = subscribtionServices;
         }
         [HttpPost("Subscribe/AddStudentToGroup")]
-        public async Task<IActionResult> AddStudentToGroup( AddStudentDto addStudentDto)
+        public async Task<IActionResult> AddStudentToGroup(AddStudentDto addStudentDto)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState.SelectMany(e=>e.Value.Errors).Select(er=>er.ErrorMessage));
+                return BadRequest(ModelState.SelectMany(e => e.Value.Errors).Select(er => er.ErrorMessage));
             }
             try
             {
@@ -33,7 +33,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-    [HttpPost("Subscribe/UpdateSubscribe")]
+        [HttpPost("Subscribe/UpdateSubscribe")]
         public async Task<IActionResult> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto)
         {
             if (!ModelState.IsValid)
@@ -43,6 +43,45 @@ namespace ELearningSystem.Controllers.V1
             try
             {
                 var result = await _subscribtionServices.UpdateSubscribeManually(updateSubscribeDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("Subscribe/CheckSubscriptionStatus")]
+        public async Task<IActionResult> CheckSubscriptionStatus(string userId, string groupId)
+        {
+            try
+            {
+                var result = await _subscribtionServices.CheckUserSubscriptionStatus(userId, groupId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("Subscribe/GetSubscribedGroups")]
+        public async Task<IActionResult> GetSubscribedGroups(string userId)
+        {
+            try
+            {
+                var result = await _subscribtionServices.GetAllSubscribtionGroupsForStudent(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet("Subscribe/GetSubscribedStudents")]
+        public async Task<IActionResult> GetSubscribedStudents(string groupId)
+        {
+            try
+            {
+                var result = await _subscribtionServices.GetAllStudentsForSpecificGroup(groupId);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Services.Abstractions;
 using Shared.Dtos;
 using Shared.Dtos.Material;
+using Shared.Dtos.Subscribe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,6 +76,33 @@ namespace Services
                 message = "Material added successfully.",
             };
 
+        }
+        public async Task<GeneralResponseDto> AddVideoFromYoutube(AddMaterialFromYoutube addMaterialFromYoutube)
+        {
+            var material = new Material
+            {
+                Id = Guid.NewGuid().ToString(),
+                Title = addMaterialFromYoutube.Title,
+                Description = addMaterialFromYoutube.Description,
+                File = addMaterialFromYoutube.Link, 
+                Type = addMaterialFromYoutube.Type,
+                GroupId = addMaterialFromYoutube.GroupId,
+            };
+           await _unitOfWork.GetRepository<Material>().AddAsync(material);
+            var result =  _unitOfWork.SaveChanges();
+            if (result.Result == 0)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Failed to add material.",
+                };
+            }
+            return new GeneralResponseDto
+            {
+                IsSuccess = true,
+                message = "Material added successfully.",
+            };
         }
 
         public async Task<GeneralResponseDto> DeleteMaterial(string id)
