@@ -1,14 +1,16 @@
 ﻿
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NETCore.MailKit.Core;
+using Persistence.Authorization;
 using Persistence.Data;
 using Persistence.Repos;
 using Persistence.Storage;
-using NETCore.MailKit.Core;
 
 namespace Persistence
 {
@@ -30,6 +32,7 @@ namespace Persistence
             services.AddScoped<IJwtRepo, JwtRepo>();
             services.AddScoped<IUserGroupRepo, UserGroupRepo>();
             services.AddScoped<IImageStorage, ImageStorage>();
+            services.AddScoped<IAuthorizationHandler, GroupAccessHandler>();
             return services;
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.Dtos.Chat;
 using Shared.Dtos.Subscribe;
@@ -14,6 +15,7 @@ namespace ELearningSystem.Controllers.V1
         {
             _subscribtionServices = subscribtionServices;
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPost("Subscribe/AddStudentToGroup")]
         public async Task<IActionResult> AddStudentToGroup(AddStudentDto addStudentDto)
         {
@@ -31,6 +33,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPost("Subscribe/UpdateSubscribe")]
         public async Task<IActionResult> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto)
         {
@@ -48,6 +51,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpGet("Subscribe/CheckSubscriptionStatus/{userId}/{groupId}")]
         public async Task<IActionResult> CheckSubscriptionStatus(string userId, string groupId)
         {
@@ -61,6 +65,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
         [HttpGet("Subscribe/GetSubscribedGroups/{userId}")]
         public async Task<IActionResult> GetSubscribedGroups(string userId)
         {
@@ -74,6 +79,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpGet("Subscribe/GetSubscribedStudents/{groupId}")]
         public async Task<IActionResult> GetSubscribedStudents(string groupId)
         {

@@ -15,7 +15,7 @@ namespace ELearningSystem.Controllers.V1
             _authService = authService;
         }
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register([FromForm] RegisterDto registerDto)
         {
             var result = await _authService.Register(registerDto);
             if (!result.IsSuccess)

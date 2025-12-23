@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.Dtos.Chat;
@@ -17,6 +18,7 @@ namespace ELearningSystem.Controllers.V1
         {
             _materialService = materialService;
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPost("Material/create")]
         public async Task<IActionResult> Create([FromForm] AddMaterialDto addMaterialDto)
         {
@@ -34,6 +36,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPost("Material/AddVideoFromYoutube")]
         public async Task<IActionResult> AddVideoFromYoutube([FromForm] AddMaterialFromYoutube addMaterialFromYoutube)
         {
@@ -51,6 +54,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Policy = "GroupAccessPolicy")]
         [HttpGet("Material/{groupId}")]
         public async Task<IActionResult> Get(string groupId)
         {
@@ -69,6 +73,7 @@ namespace ELearningSystem.Controllers.V1
             }
 
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpDelete("material/delete{materialId}")]
         public async Task<IActionResult> DeleteMessage(string materialId)
         {

@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using ELearningSystem;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstractions;
 using Shared.Dtos;
@@ -16,7 +18,7 @@ namespace Services
             _unitOfWork = unitOfWork;
             _hubContext = hubContext;
         }
-        public async Task<GeneralResponseDto> DeleteMessage(DeleteMessageDto deleteMessageDto)
+        public async Task<GeneralResponseDto> DeleteMessage( DeleteMessageDto deleteMessageDto)
         {
             var message = await _unitOfWork.GetRepository<Chat>().GetByIdAsync(deleteMessageDto.MessageId);
             if (message==null)
@@ -52,7 +54,6 @@ namespace Services
                 message = "Message deleted successfully",
             };
         }
-
         public async Task<GeneralResponseDto> EditMessage(EditMessageDto editMessageDto)
         {
             var message= await _unitOfWork.GetRepository<Chat>().GetByIdAsync(editMessageDto.MessageId);
@@ -90,7 +91,6 @@ namespace Services
                 message = "Message edited successfully",
             };
         }
-
         public async Task<GeneralResponseDto> GetMessageById(string chatId)
         {
             var message = await _unitOfWork.GetRepository<Chat>().GetByIdAsync(chatId);
@@ -116,7 +116,6 @@ namespace Services
                 message = "Message retrieved successfully",
             };
         }
-
         public async Task<GeneralResponseDto> GetMessages(string groupId)
         {
             var messages = await _unitOfWork.GetRepository<Chat>().GetAllAsyncs(c => c.GroupId == groupId);
@@ -143,7 +142,6 @@ namespace Services
                 data = messageDtos
             };
         }
-
         public async Task<GeneralResponseDto> SendMessage(SendMessageDto sendMessageDto)
         {
             var chatMessage = new Chat

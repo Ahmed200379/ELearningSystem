@@ -11,5 +11,6 @@ namespace Shared.Helpers
         public RegisterDto registerDto { get; set; }
         public string Otp { get; set; }= string.Empty;
         public string Password { get; set; } = string.Empty;
+        public string FilePath { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
@@ -7,17 +8,19 @@ using Microsoft.OpenApi.Models;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 using Persistence;
+using Persistence.Authorization;
 using Persistence.Data;
 using Services;
 using Shared.Helpers;
 using Stripe;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ELearningSystem
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddControllers();
@@ -108,8 +111,29 @@ namespace ELearningSystem
 
             builder.Services.AddAuthorization();
 
+            builder.Services.AddHttpContextAccessor();
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("GroupAccessPolicy",
+                    policy => policy.Requirements.Add(new GroupAccessRequirement()));
+            });
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                string[] roles = new[] { "Admin", "Student", "Teacher","SuperAdmin" };
+
+                foreach (var role in roles)
+                {
+                    var roleExist = await roleManager.RoleExistsAsync(role);
+                    if (!roleExist)
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
+            }
 
             // Swagger UI (Development only)
             if (app.Environment.IsDevelopment())

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.Dtos.Chat;
@@ -15,7 +16,8 @@ namespace ELearningSystem.Controllers.V1
         {
             _chatServices = chatServices;
         }
-        [HttpPost("chat/create")]
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
+        [HttpPost("SendMessage")]
         public async Task<IActionResult> Create([FromBody] SendMessageDto sendMessageDto)
         {
             if (!ModelState.IsValid)
@@ -32,7 +34,8 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpGet("chat/{groupId}")]
+        [Authorize(Policy = "GroupAccessPolicy")]
+        [HttpGet("GetMessages/{groupId}")]
         public async Task<IActionResult> GetMessages(string groupId)
         {
             if (!ModelState.IsValid)
@@ -50,7 +53,26 @@ namespace ELearningSystem.Controllers.V1
             }
 
         }
-        [HttpPut("chat/edit")]
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
+        [HttpGet("GetMessageById/{chatId}")]
+        public async Task<IActionResult> GetMessageById(string chatId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.SelectMany(e => e.Value!.Errors).Select(e => e.ErrorMessage));
+            }
+            try
+            {
+                var result = await _chatServices.GetMessageById(chatId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
+        [HttpPut("EditMessage")]
         public async Task<IActionResult> EditMessage([FromBody] EditMessageDto editMessageDto)
         {
             if (!ModelState.IsValid)
@@ -67,7 +89,8 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpDelete("chat/delete")]
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
+        [HttpDelete("DeleteMessage")]
         public async Task<IActionResult> DeleteMessage([FromBody] DeleteMessageDto deleteMessageDto)
         {
             if (!ModelState.IsValid)

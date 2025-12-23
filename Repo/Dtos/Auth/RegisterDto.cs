@@ -1,4 +1,5 @@
-﻿using Shared.Helpers.Validation;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Helpers.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,6 +36,7 @@ namespace Shared.Dtos.Auth
         [NoSpaces]
         [Required]
         public string FatherNumber {  get; set; } = string.Empty;
-        public string? PersonalPhoto { get; set; }
+        [Required]
+        public IFormFile PersonalPhoto { get; set; }
     }
 }

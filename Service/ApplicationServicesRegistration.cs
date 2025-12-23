@@ -1,5 +1,6 @@
 ﻿
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Abstractions;

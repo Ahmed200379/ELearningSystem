@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using NETCore.MailKit.Core;
 using Shared.Dtos;
 using Shared.Dtos.Auth;
+using Shared.Dtos.Material;
 using Shared.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 namespace Services
@@ -16,17 +17,20 @@ namespace Services
         private readonly IMemoryCache _memoryCache;
         private readonly IEmailService _emailService;
         private readonly IJwtRepo _jwtRepo;
+        private readonly IImageStorage _imageStorage;
         public AuthServices(IUnitOfWork unitOfWork,
             UserManager<User> userManager,
             IMemoryCache memoryCache,
             IEmailService emailService,
-            IJwtRepo jwtRepo)
+            IJwtRepo jwtRepo,
+            IImageStorage imageStorage)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _memoryCache = memoryCache;
             _emailService = emailService;
             _jwtRepo = jwtRepo;
+            _imageStorage = imageStorage;
         }
 
         public async Task<GeneralResponseDto> ForgetPassword(string Email)
@@ -82,13 +86,16 @@ namespace Services
                     IsSuccess = false,
                     message = "User already exists"
                 };
-            }        
+            }
+            var pathFolder = $"UploadedFiles/PersonalImages{registerDto.PhoneNumber}";
+            var filePath = await _imageStorage.SaveFile(registerDto.PersonalPhoto, pathFolder);
             var otp= Random.Shared.Next(100000, 999999).ToString();
             var cashedUser = new CashedUser
             {
                 registerDto = registerDto,
                 Otp = otp,
-                Password = registerDto.Password
+                Password = registerDto.Password,
+                FilePath=filePath
             };
             _memoryCache.Set(registerDto.Email,cashedUser, TimeSpan.FromMinutes(15));
 
@@ -191,6 +198,7 @@ namespace Services
                     message = "Invalid OTP."
                 };
             }
+                
             var newUser = new User
             {
                 FirstName = cashedUser.registerDto.FirstName,
@@ -200,10 +208,11 @@ namespace Services
                 PhoneNumber = cashedUser.registerDto.PhoneNumber,
                 Id = Guid.NewGuid().ToString(),
                 ParentNumber = cashedUser.registerDto.FatherNumber,
-                photoUrl = cashedUser.registerDto.PersonalPhoto
+                photoUrl = cashedUser.FilePath,
             };
             var result = await _userManager.CreateAsync(newUser, cashedUser.Password);
-            if(!result.Succeeded)
+            var roleResult = await _userManager.AddToRoleAsync(newUser, "Student");
+            if (!result.Succeeded || !roleResult.Succeeded)
             {
                 return new GeneralResponseDto
                 {

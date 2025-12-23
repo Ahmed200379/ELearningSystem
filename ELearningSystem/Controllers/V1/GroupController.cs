@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Dtos.Group;
 
@@ -14,6 +15,7 @@ namespace ELearningSystem.Controllers.V1
         {
             _groupServices = groupServices;
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
         [HttpGet("group/getall")]
         public async Task<IActionResult> GetAll()
         {
@@ -27,6 +29,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
         [HttpGet("group/getByCourseName")]
         public async Task<IActionResult> GetByName(string courseName)
         {
@@ -40,6 +43,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
         [HttpGet("group/getAllInPagination{pageNumber}/{pageSize}")]
         public async Task<IActionResult> GetAllInPagination(int pageNumber,int pageSize)
         {
@@ -53,6 +57,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Policy = "GroupAccessPolicy")]
         [HttpGet("group/getById/{groupId}")]
         public async Task<IActionResult> GetById(string groupId)
         {
@@ -66,6 +71,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Roles = "Admin,SuperAdmin")]
         [HttpDelete("group/delete/{groupId}")]
         public async Task<IActionResult> Delete(string groupId)
         {
@@ -80,6 +86,7 @@ namespace ELearningSystem.Controllers.V1
             }
 
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPost("group/creategroup")]
         public async Task<IActionResult> Create([FromBody]CreateGroupDto createGroupDto)
         {
@@ -97,7 +104,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-       
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPut("group/updategroup")]
         public async Task<IActionResult> Update([FromBody] UpdateGroupDto updateGroupDto)
         {
