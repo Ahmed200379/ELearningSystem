@@ -13,8 +13,8 @@ using Persistence.Data;
 using Services;
 using Shared.Helpers;
 using Stripe;
+using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ELearningSystem
 {
@@ -23,6 +23,16 @@ namespace ELearningSystem
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
             builder.Services.AddControllers();
             builder.Services.AddSignalR();
             builder.Services.AddEndpointsApiExplorer();
@@ -81,7 +91,7 @@ namespace ELearningSystem
 
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey))
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
                 };
             });
             builder.Services.AddHostedService<BackgroundServices>();
@@ -94,7 +104,7 @@ namespace ELearningSystem
             });
             builder.Services.AddVersionedApiExplorer(options =>
             {
-                options.GroupNameFormat = "'v'VVV"; // v1 / v2
+                options.GroupNameFormat = "'v'VVV"; 
                 options.SubstituteApiVersionInUrl = true;
             });
             StripeConfiguration.ApiKey= builder.Configuration.GetSection("Stripe")["SecretKey"];
@@ -134,20 +144,14 @@ namespace ELearningSystem
                     }
                 }
             }
-
             // Swagger UI (Development only)
-            if (app.Environment.IsDevelopment())
-            {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-
             // Authentication + Authorization
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseStaticFiles();
+            app.UseCors("AllowAll");
             app.MapControllers();
             app.MapHub<ChatHub>("/chatHub");
             app.Run();
