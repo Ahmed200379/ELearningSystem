@@ -15,7 +15,7 @@ namespace ELearningSystem.Controllers.V1
         {
             _groupServices = groupServices;
         }
-        [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("getall")]
         public async Task<IActionResult> GetAll()
         {
@@ -44,7 +44,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
-        [HttpGet("getAllInPagination{pageNumber}/{pageSize}")]
+        [HttpGet("getAllInPagination/{pageNumber}/{pageSize}")]
         public async Task<IActionResult> GetAllInPagination(int pageNumber,int pageSize)
         {
             try
@@ -86,7 +86,7 @@ namespace ELearningSystem.Controllers.V1
             }
             
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles ="Admin,Student")]
         [HttpPost("creategroup")]
         public async Task<IActionResult> Create([FromBody]CreateGroupDto createGroupDto)
         {

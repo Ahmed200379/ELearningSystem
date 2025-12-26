@@ -74,7 +74,6 @@ namespace ELearningSystem
             });
             // Jwt Config
             var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
-
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -82,16 +81,16 @@ namespace ELearningSystem
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = jwtOptions.Isusser,
+                    ValidIssuer = jwtOptions.Issuer,
 
-                    ValidateAudience = true,
-                    ValidAudience = jwtOptions.Audience,
-
+                    ValidateAudience = false,                   
                     ValidateLifetime = true,
 
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey =
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
+                    RoleClaimType = ClaimTypes.Role
+
                 };
             });
             builder.Services.AddHostedService<BackgroundServices>();
@@ -119,10 +118,8 @@ namespace ELearningSystem
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddAuthorization();
-
             builder.Services.AddHttpContextAccessor();
-
+            
             builder.Services.AddAuthorization(options =>
             {
                 options.AddPolicy("GroupAccessPolicy",
@@ -147,14 +144,15 @@ namespace ELearningSystem
             // Swagger UI (Development only)
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            // Authentication + Authorization
+            app.UseRouting();
+            app.UseCors("AllowAll");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseStaticFiles();
-            app.UseCors("AllowAll");
             app.MapControllers();
             app.MapHub<ChatHub>("/chatHub");
             app.Run();
+
         }
     }
 }

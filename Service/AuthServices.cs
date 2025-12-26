@@ -123,11 +123,13 @@ namespace Services
             _memoryCache.TryGetValue(resetPasswordDto.Email, out string? cachedvalue);
             if (cachedvalue != "Verified")
             {
+                _memoryCache.Remove(resetPasswordDto.Email);
                 return new GeneralResponseDto
                 {
                     IsSuccess = false,
                     message = "OTP has expired or is invalid."
                 };
+               
             }
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -138,6 +140,7 @@ namespace Services
             );
             if (!result.Succeeded)
             {
+                _memoryCache.Remove(resetPasswordDto.Email);
                 return new GeneralResponseDto
                 {
                     IsSuccess = false,
@@ -145,6 +148,7 @@ namespace Services
                     errors = result.Errors.Select(e => e.Description).ToList()
                 };
             }
+            _memoryCache.Remove(resetPasswordDto.Email);
             return new GeneralResponseDto
             {
                 IsSuccess = true,
@@ -171,8 +175,8 @@ namespace Services
                     message = "Invalid OTP."
                 };
             }
-            _memoryCache.Set(verifyOtpDto.Email, "Verified", TimeSpan.FromMinutes(15));
             _memoryCache.Remove(verifyOtpDto.Email);
+            _memoryCache.Set(verifyOtpDto.Email, "Verified", TimeSpan.FromMinutes(15));
             return new GeneralResponseDto
             {
                 IsSuccess = true,

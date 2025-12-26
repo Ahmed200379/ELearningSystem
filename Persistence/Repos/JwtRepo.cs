@@ -45,10 +45,10 @@ namespace Persistence.Repos
             }.Union(roleClaims)
             .Union(userClaims);
             var token = new JwtSecurityToken(
-                issuer: jwtOptions.Isusser,
+                issuer: jwtOptions.Issuer,
                 audience: jwtOptions.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(jwtOptions.LifeTime),
+                expires: DateTime.UtcNow.AddDays(jwtOptions.LifeTime),
                 signingCredentials: signingCredentials
                 );
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
