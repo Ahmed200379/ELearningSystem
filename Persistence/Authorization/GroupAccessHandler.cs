@@ -32,7 +32,7 @@ namespace Persistence.Authorization
             {
                 return;
             }
-            if (role == "Admin" || role == "SuperAdmin")
+            if (role == "Admin" || role == "SuperAdmin") 
             {
                 context.Succeed(requirement);
                 return;
