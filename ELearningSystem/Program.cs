@@ -59,7 +59,7 @@ namespace ELearningSystem
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",  
                     BearerFormat = "JWT",
-                    Reference = new OpenApiReference 
+                    Reference = new OpenApiReference  
                     {
                         Id = JwtBearerDefaults.AuthenticationScheme,
                         Type = ReferenceType.SecurityScheme
