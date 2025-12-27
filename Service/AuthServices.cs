@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Memory;
 using NETCore.MailKit.Core;
 using Shared.Dtos;
 using Shared.Dtos.Auth;
-using Shared.Dtos.Material;
 using Shared.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 namespace Services
@@ -218,6 +217,7 @@ namespace Services
             var roleResult = await _userManager.AddToRoleAsync(newUser, "Student");
             if (!result.Succeeded || !roleResult.Succeeded)
             {
+                _imageStorage.DeleteFile(cashedUser!.FilePath);
                 return new GeneralResponseDto
                 {
                     IsSuccess = false,

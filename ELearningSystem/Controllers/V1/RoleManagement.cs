@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.Dtos.role;
+using Shared.Dtos.RoleManagement;
 using Shared.Enums;
 
 namespace ELearningSystem.Controllers.V1
@@ -48,6 +49,20 @@ namespace ELearningSystem.Controllers.V1
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+        }
+        [HttpDelete("deleteRole")]
+        public async Task<IActionResult> Delete([FromBody]RemoveRoleDto removeRoleDto)
+        {
+            try
+            {
+                var result = await _roleManagementService.RemoveRole(removeRoleDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
         }
     }
 }
