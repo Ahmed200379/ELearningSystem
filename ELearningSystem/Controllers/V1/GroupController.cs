@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Dtos.Group;
@@ -15,7 +16,7 @@ namespace ELearningSystem.Controllers.V1
         {
             _groupServices = groupServices;
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize( Roles = "Admin,Teacher,SuperAdmin,Student")]
         [HttpGet("getall")]
         public async Task<IActionResult> GetAll()
         {

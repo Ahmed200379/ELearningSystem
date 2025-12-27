@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Dtos.Auth;
 
@@ -34,6 +35,7 @@ namespace ELearningSystem.Controllers.V1
             }
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {

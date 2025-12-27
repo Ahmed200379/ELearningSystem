@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -23,18 +24,38 @@ namespace ELearningSystem
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // ===================== CORS =====================
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll",
-                    policy =>
-                    {
-                        policy.AllowAnyOrigin()
-                              .AllowAnyHeader()
-                              .AllowAnyMethod();
-                    });
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
             });
+
+            // ===================== Controllers & SignalR =====================
             builder.Services.AddControllers();
             builder.Services.AddSignalR();
+
+            // ===================== API Versioning =====================
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            });
+
+            builder.Services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
+
+            // ===================== Swagger =====================
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -50,109 +71,134 @@ namespace ELearningSystem
                     });
                 }
 
-                // JWT Authentication
                 var securityScheme = new OpenApiSecurityScheme
                 {
-                    Name = "JWT Authentication",
-                    Description = "Enter JWT Bearer token **_only_**",
+                    Name = "Authorization",
+                    Description = "Enter JWT Bearer token",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",  
+                    Scheme = "bearer",
                     BearerFormat = "JWT",
-                    Reference = new OpenApiReference  
+                    Reference = new OpenApiReference
                     {
                         Id = JwtBearerDefaults.AuthenticationScheme,
                         Type = ReferenceType.SecurityScheme
                     }
                 };
 
-                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityDefinition(
+                    JwtBearerDefaults.AuthenticationScheme,
+                    securityScheme);
+
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                { securityScheme, new string[] {} }
+                    {
+                        securityScheme,
+                        Array.Empty<string>()
+                    }
                 });
             });
-            // Jwt Config
-            var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
+
+            // ===================== JWT Authentication =====================
+            var jwtOptions = builder.Configuration
+                .GetSection("Jwt")
+                .Get<JwtOptions>()!;
+
+            builder.Services
+                .AddAuthentication(options=>
+                options.DefaultAuthenticateScheme= JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = jwtOptions.Issuer,
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtOptions.Issuer,
 
-                    ValidateAudience = false,                   
-                    ValidateLifetime = true,
+                        ValidateAudience = true,
+                        ValidAudience = jwtOptions.Audience,
 
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
-                    RoleClaimType = ClaimTypes.Role
+                        ValidateLifetime = true,
 
-                };
-            });
-            builder.Services.AddHostedService<BackgroundServices>();
-            builder.Services.AddApiVersioning(options =>
-            {
-                options.AssumeDefaultVersionWhenUnspecified = true;
-                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
-                options.ReportApiVersions = true;
-                options.ApiVersionReader = new UrlSegmentApiVersionReader();
-            });
-            builder.Services.AddVersionedApiExplorer(options =>
-            {
-                options.GroupNameFormat = "'v'VVV"; 
-                options.SubstituteApiVersionInUrl = true;
-            });
-            StripeConfiguration.ApiKey= builder.Configuration.GetSection("Stripe")["SecretKey"];
-            builder.Services.AddMailKit(config =>
-            {
-                config.UseMailKit(builder.Configuration.GetSection("EmailSetting").Get<MailKitOptions>());
-            });
-            builder.Services.AddInfrastructureServices(builder.Configuration);
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes(jwtOptions.SigningKey)),
 
-            builder.Services.AddApplicationServices(builder.Configuration);
+                        RoleClaimType = ClaimTypes.Role
+                    };
+                });
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            builder.Services.AddHttpContextAccessor();
-            
+            // ===================== Authorization =====================
             builder.Services.AddAuthorization(options =>
             {
+
                 options.AddPolicy("GroupAccessPolicy",
                     policy => policy.Requirements.Add(new GroupAccessRequirement()));
             });
+
+            // ===================== DB & Identity =====================
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // ===================== App Services =====================
+            builder.Services.AddInfrastructureServices(builder.Configuration);
+            builder.Services.AddApplicationServices(builder.Configuration);
+
+            // ===================== Background & Others =====================
+            builder.Services.AddHostedService<BackgroundServices>();
+            builder.Services.AddHttpContextAccessor();
+
+            // ===================== Stripe =====================
+            StripeConfiguration.ApiKey =
+                builder.Configuration.GetSection("Stripe")["SecretKey"];
+
+            // ===================== Mail =====================
+            builder.Services.AddMailKit(config =>
+            {
+                config.UseMailKit(
+                    builder.Configuration
+                        .GetSection("EmailSetting")
+                        .Get<MailKitOptions>());
+            });
+
             var app = builder.Build();
+
+            // ===================== Seed Roles =====================
             using (var scope = app.Services.CreateScope())
             {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var roleManager =
+                    scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                string[] roles = new[] { "Admin", "Student", "Teacher","SuperAdmin" };
+                string[] roles = { "Admin", "Student", "Teacher", "SuperAdmin" };
 
                 foreach (var role in roles)
                 {
-                    var roleExist = await roleManager.RoleExistsAsync(role);
-                    if (!roleExist)
+                    if (!await roleManager.RoleExistsAsync(role))
                     {
                         await roleManager.CreateAsync(new IdentityRole(role));
                     }
                 }
             }
-            // Swagger UI (Development only)
-                app.UseSwagger();
-                app.UseSwaggerUI();
+
+            // ===================== Middleware =====================
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
             app.UseRouting();
+
             app.UseCors("AllowAll");
+
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseStaticFiles();
-            app.MapControllers();
-            app.MapHub<ChatHub>("/chatHub");
-            app.Run();
 
+            app.UseStaticFiles();
+
+            app.MapControllers().RequireAuthorization(new AuthorizeAttribute() { AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme });
+
+            app.MapHub<ChatHub>("/chatHub");
+
+            app.Run();
         }
     }
 }

@@ -24,13 +24,15 @@ namespace Persistence.Authorization
 
         protected override  async Task HandleRequirementAsync(AuthorizationHandlerContext context, GroupAccessRequirement requirement)
         {
-            var userId = context.User?.FindFirst("sub")?.Value;
+            var userId =
+              context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? context.User.FindFirst("sub")?.Value;
             var role = context.User?.FindFirst(ClaimTypes.Role)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 return;
             }
-            if (role == Role.Admin.ToString())
+            if (role == "Admin" || role == "SuperAdmin")
             {
                 context.Succeed(requirement);
                 return;
