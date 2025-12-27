@@ -20,6 +20,7 @@ namespace Services
             services.AddScoped<IAuthService, AuthServices>();
             services.AddScoped<ISubscribtionServices, SubscribtionServices>();
             services.AddScoped<IPaymentServices, PaymentServices>();
+            services.AddScoped<IRoleManagementService, RoleManagementService>();
             // Register application services here
             return services;
         }
