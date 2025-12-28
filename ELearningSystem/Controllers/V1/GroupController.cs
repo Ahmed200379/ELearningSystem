@@ -17,7 +17,7 @@ namespace ELearningSystem.Controllers.V1
             _groupServices = groupServices;
         }
         [Authorize( Roles = "Admin,Teacher,SuperAdmin,Student")]
-        [HttpGet("getall")]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -59,7 +59,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Policy = "GroupAccessPolicy")]
-        [HttpGet("getById/{groupId}")]
+        [HttpGet("GetById/{groupId}")]
         public async Task<IActionResult> GetById(string groupId)
         {
             try
@@ -73,7 +73,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Roles = "Admin,SuperAdmin")]
-        [HttpDelete("delete/{groupId}")]
+        [HttpDelete("Delete/{groupId}")]
         public async Task<IActionResult> Delete(string groupId)
         {
             try
@@ -88,7 +88,7 @@ namespace ELearningSystem.Controllers.V1
             
         }
         [Authorize(Roles ="Admin,Student")]
-        [HttpPost("creategroup")]
+        [HttpPost("CreateGroup")]
         public async Task<IActionResult> Create([FromBody]CreateGroupDto createGroupDto)
         {
             if (!ModelState.IsValid)
@@ -106,7 +106,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpPut("updategroup")]
+        [HttpPut("UpdateGroup")]
         public async Task<IActionResult> Update([FromBody] UpdateGroupDto updateGroupDto)
         {
             if (!ModelState.IsValid)

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
@@ -18,6 +19,7 @@ namespace ELearningSystem.Controllers.V1
         {
             _answerService = answerService;
         }
+        [Authorize(Policy = "GroupAccessPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetAllAnswers()
         {
@@ -29,6 +31,7 @@ namespace ELearningSystem.Controllers.V1
                 data = answers,
             });
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAnswerById(string id)
         {
@@ -51,6 +54,7 @@ namespace ELearningSystem.Controllers.V1
                 });
             }
         }
+        [Authorize(Policy = "GroupAccessPolicy")]
         [HttpPost]
         public async Task<IActionResult> CreateAnswer([FromBody] RequestAnswerDto answerDto)
         {
@@ -73,6 +77,7 @@ namespace ELearningSystem.Controllers.V1
                 });
             }
         }
+        [Authorize(Policy = "GroupAccessPolicy")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAnswer(string id, [FromBody] RequestAnswerDto answerDto)
         {
@@ -95,6 +100,7 @@ namespace ELearningSystem.Controllers.V1
                 });
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpDelete]
         public async Task<IActionResult> DeleteAnswer([FromQuery] string id)
         {

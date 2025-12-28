@@ -37,7 +37,7 @@ namespace ELearningSystem.Controllers.V1
             }
 
         }
-        [HttpGet("getall/{role}")]
+        [HttpGet("GetAllUsersWithSpesificRole/{role}")]
         public async Task<IActionResult> GetAll(Role role)
         {
             try
@@ -50,7 +50,7 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        [HttpDelete("deleteRole")]
+        [HttpDelete("DeleteRole")]
         public async Task<IActionResult> Delete([FromBody]RemoveRoleDto removeRoleDto)
         {
             try

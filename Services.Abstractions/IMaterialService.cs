@@ -10,5 +10,7 @@ namespace Services.Abstractions
         public Task<GeneralResponseDto> DeleteMaterial(string id);
         public Task<GeneralResponseDto> GetAllMaterial(string groupId);
         public Task<GeneralResponseDto> AddVideoFromYoutube(AddMaterialFromYoutube addMaterialFromYoutube);
+        public Task<GeneralResponseDto> ShowHomeworkForStudent(ShowHomeworkDto showHomeworkDto);
+        public Task<GeneralResponseDto> AddHomeworkForStudent(AddHomeworkDto addHomeworkDto);
     }
 }

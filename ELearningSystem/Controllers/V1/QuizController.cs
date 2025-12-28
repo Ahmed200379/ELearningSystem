@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.Dtos;
@@ -9,6 +10,7 @@ namespace ELearningSystem.Controllers.V1
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("1.0")]
+    [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
     public class QuizController : ControllerBase
     {
         private readonly IQuizService _quizService;
@@ -17,6 +19,7 @@ namespace ELearningSystem.Controllers.V1
             _quizService = quizService;
         }
         [HttpGet]
+
         public async Task<IActionResult> GetAllQuizzes()
         {
             var quizzes = await _quizService.GetAll();

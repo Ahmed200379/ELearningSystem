@@ -19,7 +19,7 @@ namespace ELearningSystem.Controllers.V1
             _materialService = materialService;
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpPost("Material/create")]
+        [HttpPost("CreateMaterial")]
         public async Task<IActionResult> Create([FromForm] AddMaterialDto addMaterialDto)
         {
             if (!ModelState.IsValid)
@@ -36,8 +36,26 @@ namespace ELearningSystem.Controllers.V1
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [Authorize(Policy = "GroupAccessPolicy")]
+        [HttpPost("AddHomework")]
+        public async Task<IActionResult> AddHomework([FromForm] AddHomeworkDto addHomeworkDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.SelectMany(e => e.Value!.Errors).Select(e => e.ErrorMessage));
+            }
+            try
+            {
+                var result = await _materialService.AddHomeworkForStudent(addHomeworkDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpPost("Material/AddVideoFromYoutube")]
+        [HttpPost("AddVideoFromYoutube")]
         public async Task<IActionResult> AddVideoFromYoutube([FromForm] AddMaterialFromYoutube addMaterialFromYoutube)
         {
             if (!ModelState.IsValid)
@@ -55,7 +73,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Policy = "GroupAccessPolicy")]
-        [HttpGet("Material/{groupId}")]
+        [HttpGet("GetAllMaterials/{groupId}")]
         public async Task<IActionResult> Get(string groupId)
         {
             if (!ModelState.IsValid)
@@ -73,8 +91,27 @@ namespace ELearningSystem.Controllers.V1
             }
 
         }
+        [Authorize(Policy = "GroupAccessPolicy")]
+        [HttpGet("GetAllHomeworks")]
+        public async Task<IActionResult> GetAllHomeworks(ShowHomeworkDto showHomeworkDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.SelectMany(e => e.Value!.Errors).Select(e => e.ErrorMessage));
+            }
+            try
+            {
+                var result = await _materialService.ShowHomeworkForStudent(showHomeworkDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpDelete("material/delete{materialId}")]
+        [HttpDelete("Delete{materialId}")]
         public async Task<IActionResult> DeleteMessage(string materialId)
         {
             if (!ModelState.IsValid)

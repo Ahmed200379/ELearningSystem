@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstractions;
 using Shared.Dtos;
@@ -17,6 +18,7 @@ namespace ELearningSystem.Controllers.V1
             _questionService = questionService;
         }
         [HttpGet]
+        [Authorize(Policy = "GroupAccessPolicy")]
         public async Task<IActionResult> GetAllQuestions()
         {
             var questions = await _questionService.GetAllQuestionsAsync();
@@ -27,6 +29,7 @@ namespace ELearningSystem.Controllers.V1
                 data = questions,
             });
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpGet("id")]
         public async Task<IActionResult> GetQuestionById(string id)
         {
@@ -49,6 +52,7 @@ namespace ELearningSystem.Controllers.V1
                 });
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> CreateQuestion([FromBody] RequestQuestionDto question)
         {
@@ -60,6 +64,7 @@ namespace ELearningSystem.Controllers.V1
                 data = createdQuestion,
             });
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateQuestion(string id, [FromBody]RequestQuestionDto question)
         {
@@ -82,6 +87,7 @@ namespace ELearningSystem.Controllers.V1
                 });
             }
         }
+        [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
         [HttpDelete]
         public async Task<IActionResult> DeleteQuestion([FromQuery] string id)
         {

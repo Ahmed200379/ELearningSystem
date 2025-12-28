@@ -5,10 +5,12 @@ using Services.Abstractions;
 using Shared.Dtos;
 using Shared.Dtos.Material;
 using Shared.Dtos.Subscribe;
+using Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Services
@@ -22,6 +24,62 @@ namespace Services
             _unitOfWork = unitOfWork;
             _imageStorage = imageStorage;
         }
+
+        public async Task<GeneralResponseDto> AddHomeworkForStudent(AddHomeworkDto addHomeworkDto)
+        {
+            if (addHomeworkDto.File == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "file is required"
+                };
+            }
+            var pathFolder = $"UploadedFiles/Homework/{addHomeworkDto.GroupId}";
+            var filePath = await _imageStorage.SaveFile(addHomeworkDto.File, pathFolder);
+            if (filePath == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Failed to add HomeWork.",
+                };
+            }
+            var newMaterial = new Material
+            {
+                Id = Guid.NewGuid().ToString(),
+                Title = addHomeworkDto.NameOfStudent,
+                Description = addHomeworkDto.Description,
+                File = filePath,
+                Type = TypeOfMaterial.HomeWork,
+                GroupId = addHomeworkDto.GroupId,
+            };
+            await _unitOfWork.GetRepository<Material>().AddAsync(newMaterial);
+            var result = await _unitOfWork.SaveChanges();
+            if (result == 0)
+            {
+                var isDeleted = _imageStorage.DeleteFile(filePath);
+                if (!isDeleted)
+                {
+                    return new GeneralResponseDto
+                    {
+                        IsSuccess = false,
+                        message = "Failed to add Homework with error in delete saved file.",
+                    };
+                }
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "Failed to add Homework.",
+                };
+            }
+            return new GeneralResponseDto
+            {
+                IsSuccess = true,
+                message = "Homework added successfully.",
+            };
+        }
+
         public async Task<GeneralResponseDto> AddMaterial(AddMaterialDto addMaterialDto)
         {
             if (addMaterialDto.File == null)
@@ -169,6 +227,35 @@ namespace Services
             {
                 IsSuccess = true,
                 message = "Materials retrieved successfully.",
+                data = materialDtos
+            };
+        }
+        public async Task<GeneralResponseDto> ShowHomeworkForStudent(ShowHomeworkDto showHomeworkDto)
+        {
+            var materials = await _unitOfWork.GetRepository<Material>().GetAllAsyncs(m => m.GroupId == showHomeworkDto.GroupId &&
+            m.AdditionDate>= showHomeworkDto.UploadTimeFrom
+            && m.AdditionDate<= showHomeworkDto.UploadTimeTo
+            && m.Type==TypeOfMaterial.HomeWork);
+            if (materials == null)
+            {
+                return new GeneralResponseDto
+                {
+                    IsSuccess = false,
+                    message = "No Homeworks found for the specified group.",
+                };
+            }
+            var materialDtos = materials.Select(m => new ReadHomeworkDto
+            {
+                Id = m.Id,
+                Name = m.Title,
+                Description = m.Description,
+                File = m.File,
+                AdditionDate = m.AdditionDate
+            }).ToList();
+            return new GeneralResponseDto
+            {
+                IsSuccess = true,
+                message = "HomeWorks retrieved successfully.",
                 data = materialDtos
             };
         }

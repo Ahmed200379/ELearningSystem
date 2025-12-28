@@ -16,7 +16,7 @@ namespace ELearningSystem.Controllers.V1
             _subscribtionServices = subscribtionServices;
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpPost("Subscribe/AddStudentToGroup")]
+        [HttpPost("AddStudentToGroup")]
         public async Task<IActionResult> AddStudentToGroup(AddStudentDto addStudentDto)
         {
             if (!ModelState.IsValid)
@@ -34,7 +34,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpPost("Subscribe/UpdateSubscribe")]
+        [HttpPost("UpdateSubscribe")]
         public async Task<IActionResult> UpdateSubscribeManually(UpdateSubscribeDto updateSubscribeDto)
         {
             if (!ModelState.IsValid)
@@ -52,7 +52,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpGet("Subscribe/CheckSubscriptionStatus/{userId}/{groupId}")]
+        [HttpGet("CheckSubscriptionStatus/{userId}/{groupId}")]
         public async Task<IActionResult> CheckSubscriptionStatus(string userId, string groupId)
         {
             try
@@ -66,7 +66,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin,Student")]
-        [HttpGet("Subscribe/GetSubscribedGroups/{userId}")]
+        [HttpGet("GetSubscribedGroups/{userId}")]
         public async Task<IActionResult> GetSubscribedGroups(string userId)
         {
             try
@@ -80,7 +80,7 @@ namespace ELearningSystem.Controllers.V1
             }
         }
         [Authorize(Roles = "Admin,Teacher,SuperAdmin")]
-        [HttpGet("Subscribe/GetSubscribedStudents/{groupId}")]
+        [HttpGet("GetSubscribedStudents/{groupId}")]
         public async Task<IActionResult> GetSubscribedStudents(string groupId)
         {
             try
